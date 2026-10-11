@@ -1,0 +1,28 @@
+{
+  "schema": 1,
+  "review": "static-source-assembly-cfi-lsda",
+  "firmware": "0x13200006",
+  "codeSha256": "181a557af84ca0ae50a9629b10905a229cee070b2f5c8e7afc367e5b466dbf33",
+  "inspection": "tools/profiles/cc-stub-inspection.json",
+  "files": {
+    "tools/cc_bootstrap_stub.c": "9ca9c6fe6b8b7eb2e5eff743eaa18d9455dbf31db73332c709ef6d768bcee91e",
+    "tools/cc_bootstrap_stub.h": "de624ae7ec316a41d3ae6831ffcba8cf7e15f145fa15fa295e165de422b17698",
+    "tools/cc_bootstrap_stub.ld": "b7ad0cbdc281b7ab3e777283c6c7b1016f061445f6b98237de7c32e5d8381e05",
+    "tools/cc_bootstrap_stub.mk": "87629318cef496576635362aaf79f3c9d0764bd71f3b1ebd44a9c68853567ccd",
+    "build/cc-bootstrap-stub.elf": "0120fbf0179fa09f55b77587b293546d1836b0d641e5ffa49bbf50cece03f31c",
+    "tools/profiles/cc-stub-inspection.json": "d0a2edf68c5473137d1953208bd9649775e4456b7204170150e5e3475de01335"
+  },
+  "findings": [
+    "Four registered FDEs cover entry, registration, cache callback and worker.",
+    "CIE personality reference is indirect PC-relative to state+0x210; code, LSDA and FDE records remain in the copied text image.",
+    "Catch-all landing pads cover Evaluate and the matching native string free.",
+    "Entry preserves six argument registers and original stack pointer before tail forwarding.",
+    "Registration is checked through the target cache before Evaluate."
+  ],
+  "limitations": [
+    "Static review only; runtime acceptance and UI installation are not yet observed.",
+    "The target registration helper can allocate when its cache is full and does not check malloc failure.",
+    "Native C++ handling does not recover from invalid memory access or unrelated process failures.",
+    "Registered code, FDE, LSDA and personality storage must remain mapped until ShellUI exits."
+  ]
+}

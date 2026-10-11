@@ -1,0 +1,572 @@
+{
+  "schema": 1,
+  "status": "compiled-and-inspected-offline; no runtime execution or exception test; readiness unchanged",
+  "image": {
+    "path": "build/cc-bootstrap-stub.elf",
+    "sha256": "0120fbf0179fa09f55b77587b293546d1836b0d641e5ffa49bbf50cece03f31c",
+    "codeSha256": "181a557af84ca0ae50a9629b10905a229cee070b2f5c8e7afc367e5b466dbf33",
+    "codeBytes": 1228,
+    "stateBytes": 944,
+    "assemblySha256": "08538968ce3e2d2b01ce58e1cc8c6156e74a40733d5798eb02118f29de57e046"
+  },
+  "offsets": {
+    "nd_hook": 0,
+    "nd_bootstrap_worker": 40,
+    "nd_lsda_start": 992,
+    "nd_lsda_end": 1028,
+    "nd_eh_frame_start": 1032,
+    "nd_eh_frame_end": 1228,
+    "nd_state": 16384,
+    "DW.ref.__gxx_personality_v0": 16912
+  },
+  "cies": [
+    {
+      "offset": 1032,
+      "length": 24,
+      "augmentation": "zR",
+      "codeAlign": 1,
+      "dataAlign": -8,
+      "returnRegister": 16,
+      "fdeEncoding": 27
+    },
+    {
+      "offset": 1144,
+      "length": 32,
+      "augmentation": "zPLR",
+      "codeAlign": 1,
+      "dataAlign": -8,
+      "returnRegister": 16,
+      "personalitySlot": 16912,
+      "lsdaEncoding": 27,
+      "fdeEncoding": 27
+    }
+  ],
+  "fdes": [
+    {
+      "offset": 1056,
+      "length": 32,
+      "cieOffset": 1032,
+      "pcStart": 0,
+      "pcSize": 28,
+      "pcEnd": 28
+    },
+    {
+      "offset": 1088,
+      "length": 36,
+      "cieOffset": 1032,
+      "pcStart": 497,
+      "pcSize": 421,
+      "pcEnd": 918
+    },
+    {
+      "offset": 1124,
+      "length": 20,
+      "cieOffset": 1032,
+      "pcStart": 918,
+      "pcSize": 74,
+      "pcEnd": 992
+    },
+    {
+      "offset": 1176,
+      "length": 48,
+      "cieOffset": 1144,
+      "pcStart": 40,
+      "pcSize": 457,
+      "pcEnd": 497,
+      "lsdaOffset": 992,
+      "callSites": [
+        {
+          "start": 40,
+          "size": 248,
+          "landingPad": null,
+          "actionOffset": 0
+        },
+        {
+          "start": 288,
+          "size": 12,
+          "landingPad": 472,
+          "actionOffset": 1,
+          "typeSelector": 1,
+          "nextAction": 0,
+          "catchAll": true
+        },
+        {
+          "start": 391,
+          "size": 6,
+          "landingPad": 470,
+          "actionOffset": 1,
+          "typeSelector": 1,
+          "nextAction": 0,
+          "catchAll": true
+        },
+        {
+          "start": 397,
+          "size": 100,
+          "landingPad": null,
+          "actionOffset": 0
+        }
+      ],
+      "catchAllTypeEntry": "0x0"
+    }
+  ],
+  "retainedObjectRelocations": [
+    {
+      "targetSection": ".text.nd_hook",
+      "offset": 13,
+      "type": 4,
+      "symbol": "nd_bootstrap_worker",
+      "addend": -4
+    },
+    {
+      "targetSection": ".text.nd_thunks",
+      "offset": 2,
+      "type": 2,
+      "symbol": "nd_state",
+      "addend": 492
+    },
+    {
+      "targetSection": ".text.nd_thunks",
+      "offset": 8,
+      "type": 2,
+      "symbol": "nd_state",
+      "addend": 500
+    },
+    {
+      "targetSection": ".text.nd_bootstrap_worker",
+      "offset": 3,
+      "type": 2,
+      "symbol": "nd_state",
+      "addend": 96
+    },
+    {
+      "targetSection": ".text.nd_bootstrap_worker",
+      "offset": 20,
+      "type": 2,
+      "symbol": "nd_state",
+      "addend": -4
+    },
+    {
+      "targetSection": ".text.nd_bootstrap_worker",
+      "offset": 45,
+      "type": 2,
+      "symbol": "nd_state",
+      "addend": 4
+    },
+    {
+      "targetSection": ".text.nd_bootstrap_worker",
+      "offset": 66,
+      "type": 2,
+      "symbol": "nd_state",
+      "addend": 92
+    },
+    {
+      "targetSection": ".text.nd_bootstrap_worker",
+      "offset": 79,
+      "type": 2,
+      "symbol": "nd_state",
+      "addend": 28
+    },
+    {
+      "targetSection": ".text.nd_bootstrap_worker",
+      "offset": 86,
+      "type": 2,
+      "symbol": "nd_state",
+      "addend": 20
+    },
+    {
+      "targetSection": ".text.nd_bootstrap_worker",
+      "offset": 102,
+      "type": 2,
+      "symbol": "nd_state",
+      "addend": 100
+    },
+    {
+      "targetSection": ".text.nd_bootstrap_worker",
+      "offset": 129,
+      "type": 2,
+      "symbol": "nd_state",
+      "addend": 84
+    },
+    {
+      "targetSection": ".text.nd_bootstrap_worker",
+      "offset": 148,
+      "type": 2,
+      "symbol": "nd_state",
+      "addend": 12
+    },
+    {
+      "targetSection": ".text.nd_bootstrap_worker",
+      "offset": 157,
+      "type": 2,
+      "symbol": "nd_state",
+      "addend": 104
+    },
+    {
+      "targetSection": ".text.nd_bootstrap_worker",
+      "offset": 168,
+      "type": 4,
+      "symbol": "",
+      "addend": -4
+    },
+    {
+      "targetSection": ".text.nd_bootstrap_worker",
+      "offset": 182,
+      "type": 2,
+      "symbol": "nd_state",
+      "addend": 104
+    },
+    {
+      "targetSection": ".text.nd_bootstrap_worker",
+      "offset": 199,
+      "type": 2,
+      "symbol": "nd_state",
+      "addend": 68
+    },
+    {
+      "targetSection": ".text.nd_bootstrap_worker",
+      "offset": 206,
+      "type": 2,
+      "symbol": "nd_state",
+      "addend": 60
+    },
+    {
+      "targetSection": ".text.nd_bootstrap_worker",
+      "offset": 213,
+      "type": 2,
+      "symbol": "nd_state",
+      "addend": 76
+    },
+    {
+      "targetSection": ".text.nd_bootstrap_worker",
+      "offset": 256,
+      "type": 2,
+      "symbol": "nd_state",
+      "addend": 44
+    },
+    {
+      "targetSection": ".text.nd_bootstrap_worker",
+      "offset": 269,
+      "type": 2,
+      "symbol": "nd_state",
+      "addend": 112
+    },
+    {
+      "targetSection": ".text.nd_bootstrap_worker",
+      "offset": 279,
+      "type": 2,
+      "symbol": "nd_state",
+      "addend": 116
+    },
+    {
+      "targetSection": ".text.nd_bootstrap_worker",
+      "offset": 293,
+      "type": 2,
+      "symbol": "nd_state",
+      "addend": -4
+    },
+    {
+      "targetSection": ".text.nd_bootstrap_worker",
+      "offset": 343,
+      "type": 2,
+      "symbol": "nd_state",
+      "addend": 128
+    },
+    {
+      "targetSection": ".text.nd_bootstrap_worker",
+      "offset": 353,
+      "type": 2,
+      "symbol": "nd_state",
+      "addend": 52
+    },
+    {
+      "targetSection": ".text.nd_bootstrap_worker",
+      "offset": 359,
+      "type": 2,
+      "symbol": "nd_state",
+      "addend": 116
+    },
+    {
+      "targetSection": ".text.nd_bootstrap_worker",
+      "offset": 371,
+      "type": 2,
+      "symbol": "nd_state",
+      "addend": 120
+    },
+    {
+      "targetSection": ".text.nd_bootstrap_worker",
+      "offset": 381,
+      "type": 2,
+      "symbol": "nd_state",
+      "addend": 100
+    },
+    {
+      "targetSection": ".text.nd_bootstrap_worker",
+      "offset": 391,
+      "type": 2,
+      "symbol": "nd_state",
+      "addend": 88
+    },
+    {
+      "targetSection": ".text.nd_bootstrap_worker",
+      "offset": 407,
+      "type": 2,
+      "symbol": "nd_state",
+      "addend": 548
+    },
+    {
+      "targetSection": ".text.nd_bootstrap_worker",
+      "offset": 418,
+      "type": 2,
+      "symbol": "nd_state",
+      "addend": 96
+    },
+    {
+      "targetSection": ".text.nd_bootstrap_worker",
+      "offset": 425,
+      "type": 2,
+      "symbol": "nd_state",
+      "addend": 36
+    },
+    {
+      "targetSection": ".text.nd_bootstrap_worker",
+      "offset": 436,
+      "type": 4,
+      "symbol": "__cxa_begin_catch",
+      "addend": -4
+    },
+    {
+      "targetSection": ".text.nd_bootstrap_worker",
+      "offset": 442,
+      "type": 2,
+      "symbol": "nd_state",
+      "addend": 540
+    },
+    {
+      "targetSection": ".text.nd_bootstrap_worker",
+      "offset": 451,
+      "type": 4,
+      "symbol": "__cxa_end_catch",
+      "addend": -4
+    },
+    {
+      "targetSection": ".text._ZL18nd_register_framesP18nd_bootstrap_state",
+      "offset": 10,
+      "type": 2,
+      "symbol": "nd_state",
+      "addend": 491
+    },
+    {
+      "targetSection": ".text._ZL18nd_register_framesP18nd_bootstrap_state",
+      "offset": 29,
+      "type": 2,
+      "symbol": "nd_state",
+      "addend": 499
+    },
+    {
+      "targetSection": ".text._ZL18nd_register_framesP18nd_bootstrap_state",
+      "offset": 43,
+      "type": 2,
+      "symbol": "nd_state",
+      "addend": 523
+    },
+    {
+      "targetSection": ".text._ZL18nd_register_framesP18nd_bootstrap_state",
+      "offset": 57,
+      "type": 2,
+      "symbol": "nd_state",
+      "addend": 507
+    },
+    {
+      "targetSection": ".text._ZL18nd_register_framesP18nd_bootstrap_state",
+      "offset": 71,
+      "type": 2,
+      "symbol": "nd_state",
+      "addend": 515
+    },
+    {
+      "targetSection": ".text._ZL18nd_register_framesP18nd_bootstrap_state",
+      "offset": 84,
+      "type": 2,
+      "symbol": "nd_state",
+      "addend": 532
+    },
+    {
+      "targetSection": ".text._ZL18nd_register_framesP18nd_bootstrap_state",
+      "offset": 91,
+      "type": 2,
+      "symbol": "nd_eh_frame_start",
+      "addend": -4
+    },
+    {
+      "targetSection": ".text._ZL18nd_register_framesP18nd_bootstrap_state",
+      "offset": 98,
+      "type": 2,
+      "symbol": "nd_eh_frame_end",
+      "addend": -4
+    },
+    {
+      "targetSection": ".text._ZL18nd_register_framesP18nd_bootstrap_state",
+      "offset": 114,
+      "type": 2,
+      "symbol": "nd_state",
+      "addend": -4
+    },
+    {
+      "targetSection": ".text._ZL18nd_register_framesP18nd_bootstrap_state",
+      "offset": 214,
+      "type": 2,
+      "symbol": "nd_state",
+      "addend": 532
+    },
+    {
+      "targetSection": ".text._ZL18nd_register_framesP18nd_bootstrap_state",
+      "offset": 314,
+      "type": 2,
+      "symbol": "nd_state",
+      "addend": 556
+    },
+    {
+      "targetSection": ".text._ZL18nd_register_framesP18nd_bootstrap_state",
+      "offset": 326,
+      "type": 2,
+      "symbol": "nd_state",
+      "addend": 508
+    },
+    {
+      "targetSection": ".text._ZL18nd_register_framesP18nd_bootstrap_state",
+      "offset": 332,
+      "type": 2,
+      "symbol": "nd_state",
+      "addend": 540
+    },
+    {
+      "targetSection": ".text._ZL18nd_register_framesP18nd_bootstrap_state",
+      "offset": 345,
+      "type": 2,
+      "symbol": "nd_state",
+      "addend": 532
+    },
+    {
+      "targetSection": ".text._ZL18nd_register_framesP18nd_bootstrap_state",
+      "offset": 357,
+      "type": 2,
+      "symbol": "",
+      "addend": -4
+    },
+    {
+      "targetSection": ".text._ZL18nd_register_framesP18nd_bootstrap_state",
+      "offset": 363,
+      "type": 2,
+      "symbol": "nd_state",
+      "addend": 516
+    },
+    {
+      "targetSection": ".text._ZL18nd_register_framesP18nd_bootstrap_state",
+      "offset": 369,
+      "type": 2,
+      "symbol": "nd_state",
+      "addend": 532
+    },
+    {
+      "targetSection": ".text._ZL18nd_register_framesP18nd_bootstrap_state",
+      "offset": 385,
+      "type": 2,
+      "symbol": "nd_state",
+      "addend": 536
+    },
+    {
+      "targetSection": ".text._ZL18nd_register_framesP18nd_bootstrap_state",
+      "offset": 410,
+      "type": 2,
+      "symbol": "nd_state",
+      "addend": 548
+    },
+    {
+      "targetSection": ".text._ZL13nd_verify_fdemmmm",
+      "offset": 7,
+      "type": 2,
+      "symbol": "nd_state",
+      "addend": 532
+    },
+    {
+      "targetSection": ".text._ZL13nd_verify_fdemmmm",
+      "offset": 19,
+      "type": 2,
+      "symbol": "nd_state",
+      "addend": 536
+    },
+    {
+      "targetSection": ".text._ZL13nd_verify_fdemmmm",
+      "offset": 26,
+      "type": 2,
+      "symbol": "nd_state",
+      "addend": 572
+    },
+    {
+      "targetSection": ".text._ZL13nd_verify_fdemmmm",
+      "offset": 57,
+      "type": 2,
+      "symbol": "nd_state",
+      "addend": 536
+    },
+    {
+      "targetSection": ".eh_frame",
+      "offset": 32,
+      "type": 2,
+      "symbol": "",
+      "addend": 0
+    },
+    {
+      "targetSection": ".eh_frame",
+      "offset": 64,
+      "type": 2,
+      "symbol": "",
+      "addend": 0
+    },
+    {
+      "targetSection": ".eh_frame",
+      "offset": 100,
+      "type": 2,
+      "symbol": "",
+      "addend": 0
+    },
+    {
+      "targetSection": ".eh_frame",
+      "offset": 131,
+      "type": 2,
+      "symbol": "DW.ref.__gxx_personality_v0",
+      "addend": 0
+    },
+    {
+      "targetSection": ".eh_frame",
+      "offset": 152,
+      "type": 2,
+      "symbol": "",
+      "addend": 0
+    },
+    {
+      "targetSection": ".eh_frame",
+      "offset": 161,
+      "type": 2,
+      "symbol": "",
+      "addend": 0
+    }
+  ],
+  "discardedObjectRelocations": [
+    {
+      "targetSection": ".data.DW.ref.__gxx_personality_v0",
+      "offset": 0,
+      "type": 1,
+      "symbol": "__gxx_personality_v0",
+      "addend": 0
+    }
+  ],
+  "unusedUndefinedSymbols": [
+    "__gxx_personality_v0"
+  ],
+  "notes": [
+    "The undefined __gxx_personality_v0 symbol, if retained in .symtab, has no surviving relocation or instruction reference. Its only object relocation is in discarded autoCOMDAT. Runtime CIE reads nd_state.personality directly.",
+    "Every retained address relocation is PC32/PLT32; the magic integer is not a pointer. No absolute rebasing fixups are required.",
+    "State2 means bootstrap finished and tail-forward ready, not proof that original method returned. Entry restores all six args and exact RSP before jmp."
+  ]
+}

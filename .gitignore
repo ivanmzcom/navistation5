@@ -1,0 +1,24 @@
+# Local server settings, tokens and secret-bearing generated payloads
+config.local.json
+*.local.json
+.env
+.env.*
+*.token
+build/
+evidence/
+capture/
+node_modules/
+__pycache__/
+*.pyc
+*.log
+.DS_Store
+# Console dumps, compiled artifacts and media never belong in source control
+*.elf
+*.hbc
+*.sprx
+*.self
+*.bin
+*.o
+*.mp3
+*.flac
+*.aac

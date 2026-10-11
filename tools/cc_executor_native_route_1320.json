@@ -1,0 +1,307 @@
+{
+  "schema": 1,
+  "captureProfile": "cc-executor-route-13200006-v3",
+  "firmwareExact": "0x13200006",
+  "report": "/data/navidrome-cc-executor-route-v3.json",
+  "vmmap": "/data/navidrome-cc-executor-vmmap-v3.bin",
+  "modules": [
+    {
+      "role": "rnps-apps",
+      "name": "Sce.Vsh.ShellUI.ReactNativeApps.dll.sprx",
+      "installedPath": "/system_ex/common_ex/lib/Sce.Vsh.ShellUI.ReactNativeApps.dll.sprx",
+      "capturePath": "/data/navidrome-cc-executor-rnps-apps-v3.self-header.bin",
+      "aotInfoOffset": "0x188020",
+      "aotVersion": 171,
+      "rawAotMvid": "1320015B-736E-774E-2EF7-B19AEBE7D227",
+      "snapshotSha256": "9acfd930d654e2d0409861a96bb407336a98de1c54199f8a9950b76db57b86da",
+      "codeFingerprints": [
+        {
+          "offset": "0xa64d",
+          "hex": "488b05c4f71700488b005dc3bf8f0100",
+          "evidence": "MenuManager.get_Instance"
+        },
+        {
+          "offset": "0xa6b0",
+          "hex": "554889e5488b47305dc3cccccccccccc",
+          "evidence": "MenuManager.get_Scene"
+        }
+      ]
+    },
+    {
+      "role": "common",
+      "name": "ReactNative.Vsh.Common.dll.sprx",
+      "installedPath": "/system_ex/common_ex/lib/ReactNative.Vsh.Common.dll.sprx",
+      "capturePath": "/data/navidrome-cc-executor-common-v3.self-header.bin",
+      "aotInfoOffset": "0x80030",
+      "aotVersion": 171,
+      "rawAotMvid": "388784FB-0BC3-FB5E-EB56-8B5FDA90119E",
+      "snapshotSha256": "b166676798cbf0969fbaf1f8ec86ae59bc35a684f10bac4b67ec3ba9cf7dfd4c",
+      "codeFingerprints": [
+        {
+          "offset": "0x2fb0",
+          "hex": "554889e5488b87600300004885c07415",
+          "evidence": "StackScene.get_CurrentReactContext.start"
+        },
+        {
+          "offset": "0x2fc0",
+          "hex": "488b80500300004885c07409488b80c0",
+          "evidence": "StackScene.get_CurrentReactContext.chain"
+        },
+        {
+          "offset": "0x2fcc",
+          "hex": "488b80c00300005dc331c05dc3cccccc",
+          "evidence": "StackScene.context_field_complete"
+        },
+        {
+          "offset": "0x1d4f8",
+          "hex": "498b8780030000488bf8488b004c8b15",
+          "evidence": "RenderScene.UpdateAppState.app_OnBG_receiver"
+        },
+        {
+          "offset": "0x56d4",
+          "hex": "488b8758030000488b40105dc3cccccc",
+          "evidence": "RenderScene.ApplicationName"
+        },
+        {
+          "offset": "0x4eb4",
+          "hex": "488b8758030000488b40405dc3cccccc",
+          "evidence": "RenderScene.JavaScriptBundleFile"
+        },
+        {
+          "offset": "0x1c483",
+          "hex": "488b3db65e0600be50000000e8886301",
+          "evidence": "ExceptionHandlerData.vtable_allocation"
+        }
+      ]
+    },
+    {
+      "role": "pui",
+      "name": "ReactNative.PUI.dll.sprx",
+      "installedPath": "/system_ex/common_ex/lib/ReactNative.PUI.dll.sprx",
+      "capturePath": "/data/navidrome-cc-executor-pui-v3.self-header.bin",
+      "aotInfoOffset": "0x7ac060",
+      "aotVersion": 171,
+      "rawAotMvid": "575EC30A-C86E-5140-83CD-AB4801F6E663",
+      "snapshotSha256": "5394468a23494957a7064f39bac21ec1c8acf37c5f65c4d8b66425804df065cd",
+      "codeFingerprints": [
+        {
+          "offset": "0x92394",
+          "hex": "488b47304885c07406488b40185dc331",
+          "evidence": "PUIReactContext.get__bridge"
+        },
+        {
+          "offset": "0x1cbbd8",
+          "hex": "498d4c2418488b45e0488901c1e90948",
+          "evidence": "ReactBridge.ctor.executor_store"
+        },
+        {
+          "offset": "0x645b0",
+          "hex": "554889e5488b87800000005dc3cccccc",
+          "evidence": "JSExecutor.get_NativeExecutorHandle"
+        },
+        {
+          "offset": "0x1dcef1",
+          "hex": "488b3d405a5e0040f7472d0100000075",
+          "evidence": "PUIReactContext.vtable_allocation"
+        },
+        {
+          "offset": "0x1deabd",
+          "hex": "488b3d5c545e00be68000000e8b67f11",
+          "evidence": "Data.vtable_allocation"
+        },
+        {
+          "offset": "0x1e36e7",
+          "hex": "488b3df20b5e0040f7472d0100000075",
+          "evidence": "ReactBridge.vtable_allocation"
+        },
+        {
+          "offset": "0x1d73a1",
+          "hex": "488b3d00c75e0040f7472d0100000075",
+          "evidence": "JSExecutor.vtable_allocation"
+        },
+        {
+          "offset": "0x19316f",
+          "hex": "f0488bc7488b4040488bf8488b75f048",
+          "evidence": "JSExecutor.RunOnJsThread.queue_field"
+        },
+        {
+          "offset": "0x1d0578",
+          "hex": "498d4738488918c1e8094825ffff7f00",
+          "evidence": "PUIReactApp.ctor.context_store"
+        },
+        {
+          "offset": "0x1d9fd8",
+          "hex": "488b3d61895e0040f7472d0100000075",
+          "evidence": "PUIReactApp.vtable_allocation"
+        }
+      ]
+    },
+    {
+      "role": "native",
+      "name": "libNativeExtensions.sprx",
+      "installedPath": "/system_ex/common_ex/lib/libNativeExtensions.sprx",
+      "capturePath": "/data/navidrome-cc-executor-native-v3.self-header.bin",
+      "aotInfoOffset": "0x0",
+      "aotVersion": null,
+      "rawAotMvid": "",
+      "snapshotSha256": "0d94f2e3eb5ea9103889b5230cbe45ae9cf2f6541592fd42f9ebde53403f31ad",
+      "codeFingerprints": [
+        {
+          "offset": "0x25006",
+          "hex": "488d0d13030700c5f857c04989f44889",
+          "evidence": "JSIExecutor.vtable"
+        },
+        {
+          "offset": "0x2508a",
+          "hex": "48c743680000000048894370c5f857c0",
+          "evidence": "JSIExecutor.AppInstanceId"
+        },
+        {
+          "offset": "0x250ba",
+          "hex": "418b4424084c89f7894348e856a80300",
+          "evidence": "JSIExecutor.backend"
+        },
+        {
+          "offset": "0x2a956",
+          "hex": "488b7078498b4424084885c0740bf0ff",
+          "evidence": "JSIExecutor.runtime"
+        }
+      ]
+    }
+  ],
+  "vtableGuards": [
+    {
+      "name": "context",
+      "typeToken": "0x02000448",
+      "slotOffset": "0x7c2938",
+      "recipeOffset": "0x4903cb",
+      "recipeHex": "0d018448"
+    },
+    {
+      "name": "data",
+      "typeToken": "0x0200044b",
+      "slotOffset": "0x7c3f20",
+      "recipeOffset": "0x4914db",
+      "recipeHex": "0d01844b"
+    },
+    {
+      "name": "bridge",
+      "typeToken": "0x020003f1",
+      "slotOffset": "0x7c42e0",
+      "recipeOffset": "0x49177f",
+      "recipeHex": "0d0183f1"
+    },
+    {
+      "name": "executor",
+      "typeToken": "0x02000287",
+      "slotOffset": "0x7c3aa8",
+      "recipeOffset": "0x49112b",
+      "recipeHex": "0d018287"
+    },
+    {
+      "name": "application",
+      "typeToken": "0x0200042a",
+      "slotOffset": "0x7c2940",
+      "recipeOffset": "0x4903cf",
+      "recipeHex": "0d01842a"
+    }
+  ],
+  "entrySlot": {
+    "module": "rnps-apps",
+    "offset": "0x189e18"
+  },
+  "chain": [
+    {
+      "name": "manager_scene",
+      "offset": "0x30"
+    },
+    {
+      "name": "stack_scene",
+      "offset": "0x360"
+    },
+    {
+      "name": "scene_render",
+      "offset": "0x350"
+    },
+    {
+      "name": "render_application",
+      "offset": "0x380"
+    },
+    {
+      "name": "application_context",
+      "offset": "0x38"
+    },
+    {
+      "name": "context_data",
+      "offset": "0x30"
+    },
+    {
+      "name": "data_bridge",
+      "offset": "0x18"
+    },
+    {
+      "name": "bridge_executor",
+      "offset": "0x18"
+    },
+    {
+      "name": "executor_native",
+      "offset": "0x80"
+    }
+  ],
+  "readLimit": 8192,
+  "perReadLimit": 520,
+  "recordLimit": 48,
+  "vmMapLimit": 4194304,
+  "notice": "Read-only fixed route; exact CC bundle path, exact JSIExecutor vtable/RTTI. Equal rereads are not atomic. Runtime implementation, JS-thread affinity and lifetime remain unverified.",
+  "jsThreadField": {
+    "offset": "0x40",
+    "methodToken": "0x06001211",
+    "readVa": "0x80c3ef173"
+  },
+  "supersedesRouteOnly": "v1 preserved; render_context was interface wrapper, not PUIReactContext",
+  "nativeIdentity": {
+    "vtableOffset": "0x95320",
+    "rttiOffset": "0x953b8",
+    "rttiNameOffset": "0x8db5f",
+    "rttiName": "N4rnps11JSIExecutorE",
+    "backendOffset": "0x48",
+    "appInstanceIdOffset": "0x70",
+    "runtimeOffset": "0x78",
+    "vtableTargets": [
+      "0x271e0",
+      "0x27380",
+      "0x2e9d0",
+      "0x27d60",
+      "0x30f10",
+      "0x2c1f0",
+      "0x2c8d0",
+      "0x2ceb0",
+      "0x2d3e0",
+      "0x2d8d0",
+      "0x2dba0",
+      "0x2e180",
+      "0x2e790",
+      "0x2ba00",
+      "0x2bb80",
+      "0x2bc20",
+      "0x302d0",
+      "0x312a0",
+      "0x2b380"
+    ]
+  },
+  "appIdentity": {
+    "module": "common",
+    "typeToken": "0x0200002d",
+    "slotOffset": "0x82340",
+    "recipeOffset": "0x52974",
+    "recipeHex": "0d012d",
+    "objectOffset": "0x358",
+    "nameOffset": "0x10",
+    "bundleOffset": "0x40",
+    "stringLengthOffset": "0x10",
+    "stringCharsOffset": "0x14",
+    "maxUtf16Units": 256,
+    "bundleExact": "/system_ex/rnps/apps/NPXS40003/application.ps.bundle",
+    "namePolicy": "capture only; exact bundle path establishes named CC asset identity"
+  }
+}

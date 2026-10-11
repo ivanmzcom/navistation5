@@ -1,0 +1,20 @@
+{
+  "name": "navistation5",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Experimental Navidrome Music-card homebrew for PS5",
+  "license": "GPL-3.0-or-later",
+  "repository": { "type": "git", "url": "git+ssh://git@github.com/ivanmzcom/navistation5.git" },
+  "engines": { "node": ">=20" },
+  "scripts": {
+    "test": "node --test ui/resident-audio-control-transport.test.mjs && python3 tools/test_cc_autodetect.py",
+    "build": "python3 tools/build.py"
+  },
+  "devDependencies": {
+    "@babel/core": "7.29.7",
+    "@babel/plugin-transform-block-scoping": "7.29.7",
+    "@babel/plugin-transform-classes": "7.29.7",
+    "@babel/plugin-transform-for-of": "7.29.7",
+    "esbuild": "0.28.1"
+  }
+}
