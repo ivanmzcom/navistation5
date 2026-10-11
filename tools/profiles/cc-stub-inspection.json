@@ -3,25 +3,26 @@
   "status": "compiled-and-inspected-offline; no runtime execution or exception test; readiness unchanged",
   "image": {
     "path": "build/cc-bootstrap-stub.elf",
-    "sha256": "0120fbf0179fa09f55b77587b293546d1836b0d641e5ffa49bbf50cece03f31c",
-    "codeSha256": "181a557af84ca0ae50a9629b10905a229cee070b2f5c8e7afc367e5b466dbf33",
-    "codeBytes": 1228,
-    "stateBytes": 944,
-    "assemblySha256": "08538968ce3e2d2b01ce58e1cc8c6156e74a40733d5798eb02118f29de57e046"
+    "sha256": "c299a37fae4dbbb53c9f4e210b962c687491f614a001e46c0c337552e97e63ac",
+    "codeSha256": "f1ee4d295b7af8e7c9f207ed5220f92111666368feca9f272945023193604247",
+    "codeBytes": 1956,
+    "stateBytes": 1080,
+    "assemblyPath": "tools/cc-stub.asm",
+    "assemblySha256": "ec181366292e316f979a3d03a5d470d85595449596c86412b0a899f588aa949b"
   },
   "offsets": {
     "nd_hook": 0,
     "nd_bootstrap_worker": 40,
-    "nd_lsda_start": 992,
-    "nd_lsda_end": 1028,
-    "nd_eh_frame_start": 1032,
-    "nd_eh_frame_end": 1228,
+    "nd_lsda_start": 1672,
+    "nd_lsda_end": 1708,
+    "nd_eh_frame_start": 1712,
+    "nd_eh_frame_end": 1956,
     "nd_state": 16384,
     "DW.ref.__gxx_personality_v0": 16912
   },
   "cies": [
     {
-      "offset": 1032,
+      "offset": 1712,
       "length": 24,
       "augmentation": "zR",
       "codeAlign": 1,
@@ -30,7 +31,7 @@
       "fdeEncoding": 27
     },
     {
-      "offset": 1144,
+      "offset": 1872,
       "length": 32,
       "augmentation": "zPLR",
       "codeAlign": 1,
@@ -43,65 +44,73 @@
   ],
   "fdes": [
     {
-      "offset": 1056,
+      "offset": 1736,
       "length": 32,
-      "cieOffset": 1032,
+      "cieOffset": 1712,
       "pcStart": 0,
       "pcSize": 28,
       "pcEnd": 28
     },
     {
-      "offset": 1088,
+      "offset": 1768,
       "length": 36,
-      "cieOffset": 1032,
-      "pcStart": 497,
+      "cieOffset": 1712,
+      "pcStart": 608,
       "pcSize": 421,
-      "pcEnd": 918
+      "pcEnd": 1029
     },
     {
-      "offset": 1124,
-      "length": 20,
-      "cieOffset": 1032,
-      "pcStart": 918,
-      "pcSize": 74,
-      "pcEnd": 992
-    },
-    {
-      "offset": 1176,
+      "offset": 1804,
       "length": 48,
-      "cieOffset": 1144,
+      "cieOffset": 1712,
+      "pcStart": 1029,
+      "pcSize": 562,
+      "pcEnd": 1591
+    },
+    {
+      "offset": 1852,
+      "length": 20,
+      "cieOffset": 1712,
+      "pcStart": 1591,
+      "pcSize": 74,
+      "pcEnd": 1665
+    },
+    {
+      "offset": 1904,
+      "length": 48,
+      "cieOffset": 1872,
       "pcStart": 40,
-      "pcSize": 457,
-      "pcEnd": 497,
-      "lsdaOffset": 992,
+      "pcSize": 568,
+      "pcEnd": 608,
+      "lsdaOffset": 1672,
       "callSites": [
         {
           "start": 40,
-          "size": 248,
+          "size": 205,
           "landingPad": null,
           "actionOffset": 0
         },
         {
-          "start": 288,
-          "size": 12,
-          "landingPad": 472,
+          "start": 245,
+          "size": 213,
+          "landingPad": 580,
           "actionOffset": 1,
           "typeSelector": 1,
           "nextAction": 0,
           "catchAll": true
         },
         {
-          "start": 391,
+          "start": 557,
           "size": 6,
-          "landingPad": 470,
+          "landingPad": 578,
           "actionOffset": 1,
           "typeSelector": 1,
           "nextAction": 0,
           "catchAll": true
         },
         {
-          "start": 397,
-          "size": 100,
+          "start": 563,
+          "size": 45,
           "landingPad": null,
           "actionOffset": 0
         }
@@ -133,217 +142,280 @@
     },
     {
       "targetSection": ".text.nd_bootstrap_worker",
-      "offset": 3,
+      "offset": 14,
       "type": 2,
       "symbol": "nd_state",
       "addend": 96
     },
     {
       "targetSection": ".text.nd_bootstrap_worker",
-      "offset": 20,
+      "offset": 31,
       "type": 2,
       "symbol": "nd_state",
       "addend": -4
     },
     {
       "targetSection": ".text.nd_bootstrap_worker",
-      "offset": 45,
+      "offset": 47,
       "type": 2,
       "symbol": "nd_state",
       "addend": 4
     },
     {
       "targetSection": ".text.nd_bootstrap_worker",
-      "offset": 66,
+      "offset": 68,
       "type": 2,
       "symbol": "nd_state",
       "addend": 92
     },
     {
       "targetSection": ".text.nd_bootstrap_worker",
-      "offset": 79,
+      "offset": 81,
       "type": 2,
       "symbol": "nd_state",
       "addend": 28
     },
     {
       "targetSection": ".text.nd_bootstrap_worker",
-      "offset": 86,
+      "offset": 88,
       "type": 2,
       "symbol": "nd_state",
       "addend": 20
     },
     {
       "targetSection": ".text.nd_bootstrap_worker",
-      "offset": 102,
+      "offset": 104,
       "type": 2,
       "symbol": "nd_state",
       "addend": 100
     },
     {
       "targetSection": ".text.nd_bootstrap_worker",
-      "offset": 129,
+      "offset": 123,
       "type": 2,
       "symbol": "nd_state",
       "addend": 84
     },
     {
       "targetSection": ".text.nd_bootstrap_worker",
-      "offset": 148,
+      "offset": 138,
       "type": 2,
       "symbol": "nd_state",
       "addend": 12
     },
     {
       "targetSection": ".text.nd_bootstrap_worker",
-      "offset": 157,
+      "offset": 147,
       "type": 2,
       "symbol": "nd_state",
       "addend": 104
     },
     {
       "targetSection": ".text.nd_bootstrap_worker",
-      "offset": 168,
+      "offset": 154,
       "type": 4,
       "symbol": "",
       "addend": -4
     },
     {
       "targetSection": ".text.nd_bootstrap_worker",
-      "offset": 182,
+      "offset": 166,
       "type": 2,
       "symbol": "nd_state",
-      "addend": 104
-    },
-    {
-      "targetSection": ".text.nd_bootstrap_worker",
-      "offset": 199,
-      "type": 2,
-      "symbol": "nd_state",
-      "addend": 68
+      "addend": 979
     },
     {
       "targetSection": ".text.nd_bootstrap_worker",
       "offset": 206,
-      "type": 2,
-      "symbol": "nd_state",
-      "addend": 60
-    },
-    {
-      "targetSection": ".text.nd_bootstrap_worker",
-      "offset": 213,
-      "type": 2,
-      "symbol": "nd_state",
-      "addend": 76
-    },
-    {
-      "targetSection": ".text.nd_bootstrap_worker",
-      "offset": 256,
-      "type": 2,
-      "symbol": "nd_state",
-      "addend": 44
-    },
-    {
-      "targetSection": ".text.nd_bootstrap_worker",
-      "offset": 269,
-      "type": 2,
-      "symbol": "nd_state",
-      "addend": 112
-    },
-    {
-      "targetSection": ".text.nd_bootstrap_worker",
-      "offset": 279,
-      "type": 2,
-      "symbol": "nd_state",
-      "addend": 116
-    },
-    {
-      "targetSection": ".text.nd_bootstrap_worker",
-      "offset": 293,
-      "type": 2,
-      "symbol": "nd_state",
+      "type": 4,
+      "symbol": "",
       "addend": -4
     },
     {
       "targetSection": ".text.nd_bootstrap_worker",
-      "offset": 343,
-      "type": 2,
-      "symbol": "nd_state",
-      "addend": 128
-    },
-    {
-      "targetSection": ".text.nd_bootstrap_worker",
-      "offset": 353,
-      "type": 2,
-      "symbol": "nd_state",
-      "addend": 52
-    },
-    {
-      "targetSection": ".text.nd_bootstrap_worker",
-      "offset": 359,
-      "type": 2,
-      "symbol": "nd_state",
-      "addend": 116
-    },
-    {
-      "targetSection": ".text.nd_bootstrap_worker",
-      "offset": 371,
+      "offset": 217,
       "type": 2,
       "symbol": "nd_state",
       "addend": 120
     },
     {
       "targetSection": ".text.nd_bootstrap_worker",
-      "offset": 381,
+      "offset": 227,
       "type": 2,
       "symbol": "nd_state",
       "addend": 100
     },
     {
       "targetSection": ".text.nd_bootstrap_worker",
-      "offset": 391,
+      "offset": 237,
       "type": 2,
       "symbol": "nd_state",
       "addend": 88
     },
     {
       "targetSection": ".text.nd_bootstrap_worker",
-      "offset": 407,
+      "offset": 247,
       "type": 2,
       "symbol": "nd_state",
       "addend": 548
     },
     {
       "targetSection": ".text.nd_bootstrap_worker",
-      "offset": 418,
+      "offset": 258,
       "type": 2,
       "symbol": "nd_state",
       "addend": 96
     },
     {
       "targetSection": ".text.nd_bootstrap_worker",
-      "offset": 425,
+      "offset": 265,
       "type": 2,
       "symbol": "nd_state",
       "addend": 36
     },
     {
       "targetSection": ".text.nd_bootstrap_worker",
-      "offset": 436,
+      "offset": 283,
+      "type": 2,
+      "symbol": "nd_state",
+      "addend": 948
+    },
+    {
+      "targetSection": ".text.nd_bootstrap_worker",
+      "offset": 300,
+      "type": 2,
+      "symbol": "nd_state",
+      "addend": 940
+    },
+    {
+      "targetSection": ".text.nd_bootstrap_worker",
+      "offset": 311,
+      "type": 2,
+      "symbol": "nd_state",
+      "addend": 948
+    },
+    {
+      "targetSection": ".text.nd_bootstrap_worker",
+      "offset": 325,
+      "type": 2,
+      "symbol": "nd_state",
+      "addend": 956
+    },
+    {
+      "targetSection": ".text.nd_bootstrap_worker",
+      "offset": 331,
+      "type": 2,
+      "symbol": "nd_state",
+      "addend": 948
+    },
+    {
+      "targetSection": ".text.nd_bootstrap_worker",
+      "offset": 351,
+      "type": 2,
+      "symbol": "nd_state",
+      "addend": 951
+    },
+    {
+      "targetSection": ".text.nd_bootstrap_worker",
+      "offset": 360,
+      "type": 2,
+      "symbol": "nd_state",
+      "addend": 955
+    },
+    {
+      "targetSection": ".text.nd_bootstrap_worker",
+      "offset": 373,
+      "type": 2,
+      "symbol": "nd_state",
+      "addend": 104
+    },
+    {
+      "targetSection": ".text.nd_bootstrap_worker",
+      "offset": 384,
+      "type": 2,
+      "symbol": "nd_state",
+      "addend": 68
+    },
+    {
+      "targetSection": ".text.nd_bootstrap_worker",
+      "offset": 391,
+      "type": 2,
+      "symbol": "nd_state",
+      "addend": 60
+    },
+    {
+      "targetSection": ".text.nd_bootstrap_worker",
+      "offset": 398,
+      "type": 2,
+      "symbol": "nd_state",
+      "addend": 76
+    },
+    {
+      "targetSection": ".text.nd_bootstrap_worker",
+      "offset": 414,
+      "type": 2,
+      "symbol": "nd_state",
+      "addend": 44
+    },
+    {
+      "targetSection": ".text.nd_bootstrap_worker",
+      "offset": 427,
+      "type": 2,
+      "symbol": "nd_state",
+      "addend": 112
+    },
+    {
+      "targetSection": ".text.nd_bootstrap_worker",
+      "offset": 437,
+      "type": 2,
+      "symbol": "nd_state",
+      "addend": 116
+    },
+    {
+      "targetSection": ".text.nd_bootstrap_worker",
+      "offset": 455,
+      "type": 2,
+      "symbol": "nd_state",
+      "addend": -4
+    },
+    {
+      "targetSection": ".text.nd_bootstrap_worker",
+      "offset": 505,
+      "type": 2,
+      "symbol": "nd_state",
+      "addend": 128
+    },
+    {
+      "targetSection": ".text.nd_bootstrap_worker",
+      "offset": 519,
+      "type": 2,
+      "symbol": "nd_state",
+      "addend": 52
+    },
+    {
+      "targetSection": ".text.nd_bootstrap_worker",
+      "offset": 525,
+      "type": 2,
+      "symbol": "nd_state",
+      "addend": 116
+    },
+    {
+      "targetSection": ".text.nd_bootstrap_worker",
+      "offset": 544,
       "type": 4,
       "symbol": "__cxa_begin_catch",
       "addend": -4
     },
     {
       "targetSection": ".text.nd_bootstrap_worker",
-      "offset": 442,
+      "offset": 550,
       "type": 2,
       "symbol": "nd_state",
       "addend": 540
     },
     {
       "targetSection": ".text.nd_bootstrap_worker",
-      "offset": 451,
+      "offset": 559,
       "type": 4,
       "symbol": "__cxa_end_catch",
       "addend": -4
@@ -482,6 +554,104 @@
       "addend": 548
     },
     {
+      "targetSection": ".text._ZL19nd_empty_music_gateP18nd_bootstrap_state",
+      "offset": 13,
+      "type": 2,
+      "symbol": "nd_state",
+      "addend": 984
+    },
+    {
+      "targetSection": ".text._ZL19nd_empty_music_gateP18nd_bootstrap_state",
+      "offset": 22,
+      "type": 2,
+      "symbol": "nd_state",
+      "addend": 963
+    },
+    {
+      "targetSection": ".text._ZL19nd_empty_music_gateP18nd_bootstrap_state",
+      "offset": 36,
+      "type": 2,
+      "symbol": "nd_state",
+      "addend": 971
+    },
+    {
+      "targetSection": ".text._ZL19nd_empty_music_gateP18nd_bootstrap_state",
+      "offset": 88,
+      "type": 2,
+      "symbol": "nd_state",
+      "addend": -4
+    },
+    {
+      "targetSection": ".text._ZL19nd_empty_music_gateP18nd_bootstrap_state",
+      "offset": 94,
+      "type": 2,
+      "symbol": "nd_state",
+      "addend": 964
+    },
+    {
+      "targetSection": ".text._ZL19nd_empty_music_gateP18nd_bootstrap_state",
+      "offset": 103,
+      "type": 2,
+      "symbol": "nd_state",
+      "addend": 992
+    },
+    {
+      "targetSection": ".text._ZL19nd_empty_music_gateP18nd_bootstrap_state",
+      "offset": 197,
+      "type": 2,
+      "symbol": "nd_state",
+      "addend": 992
+    },
+    {
+      "targetSection": ".text._ZL19nd_empty_music_gateP18nd_bootstrap_state",
+      "offset": 262,
+      "type": 2,
+      "symbol": "nd_state",
+      "addend": 972
+    },
+    {
+      "targetSection": ".text._ZL19nd_empty_music_gateP18nd_bootstrap_state",
+      "offset": 268,
+      "type": 2,
+      "symbol": "nd_state",
+      "addend": 1004
+    },
+    {
+      "targetSection": ".text._ZL19nd_empty_music_gateP18nd_bootstrap_state",
+      "offset": 281,
+      "type": 2,
+      "symbol": "nd_state",
+      "addend": 1000
+    },
+    {
+      "targetSection": ".text._ZL19nd_empty_music_gateP18nd_bootstrap_state",
+      "offset": 289,
+      "type": 2,
+      "symbol": "nd_state",
+      "addend": 996
+    },
+    {
+      "targetSection": ".text._ZL19nd_empty_music_gateP18nd_bootstrap_state",
+      "offset": 357,
+      "type": 2,
+      "symbol": "nd_state",
+      "addend": 1008
+    },
+    {
+      "targetSection": ".text._ZL19nd_empty_music_gateP18nd_bootstrap_state",
+      "offset": 488,
+      "type": 2,
+      "symbol": "nd_state",
+      "addend": 964
+    },
+    {
+      "targetSection": ".text._ZL19nd_empty_music_gateP18nd_bootstrap_state",
+      "offset": 540,
+      "type": 2,
+      "symbol": "nd_state",
+      "addend": 988
+    },
+    {
       "targetSection": ".text._ZL13nd_verify_fdemmmm",
       "offset": 7,
       "type": 2,
@@ -532,21 +702,28 @@
     },
     {
       "targetSection": ".eh_frame",
-      "offset": 131,
-      "type": 2,
-      "symbol": "DW.ref.__gxx_personality_v0",
-      "addend": 0
-    },
-    {
-      "targetSection": ".eh_frame",
-      "offset": 152,
+      "offset": 148,
       "type": 2,
       "symbol": "",
       "addend": 0
     },
     {
       "targetSection": ".eh_frame",
-      "offset": 161,
+      "offset": 179,
+      "type": 2,
+      "symbol": "DW.ref.__gxx_personality_v0",
+      "addend": 0
+    },
+    {
+      "targetSection": ".eh_frame",
+      "offset": 200,
+      "type": 2,
+      "symbol": "",
+      "addend": 0
+    },
+    {
+      "targetSection": ".eh_frame",
+      "offset": 209,
       "type": 2,
       "symbol": "",
       "addend": 0

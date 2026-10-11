@@ -2,27 +2,30 @@
   "schema": 1,
   "review": "static-source-assembly-cfi-lsda",
   "firmware": "0x13200006",
-  "codeSha256": "181a557af84ca0ae50a9629b10905a229cee070b2f5c8e7afc367e5b466dbf33",
+  "codeSha256": "f1ee4d295b7af8e7c9f207ed5220f92111666368feca9f272945023193604247",
   "inspection": "tools/profiles/cc-stub-inspection.json",
   "files": {
-    "tools/cc_bootstrap_stub.c": "9ca9c6fe6b8b7eb2e5eff743eaa18d9455dbf31db73332c709ef6d768bcee91e",
-    "tools/cc_bootstrap_stub.h": "de624ae7ec316a41d3ae6831ffcba8cf7e15f145fa15fa295e165de422b17698",
+    "tools/cc_bootstrap_stub.c": "a5d7b4c0a5dd7ca4c63245bdb903bdd5d768128ac8b3d3a635c0b7654bfafd72",
+    "tools/cc_bootstrap_stub.h": "aad71abe443f154af98a77dc3663d3703e198c4d68464cab52ac60bff48676f9",
     "tools/cc_bootstrap_stub.ld": "b7ad0cbdc281b7ab3e777283c6c7b1016f061445f6b98237de7c32e5d8381e05",
     "tools/cc_bootstrap_stub.mk": "87629318cef496576635362aaf79f3c9d0764bd71f3b1ebd44a9c68853567ccd",
-    "build/cc-bootstrap-stub.elf": "0120fbf0179fa09f55b77587b293546d1836b0d641e5ffa49bbf50cece03f31c",
-    "tools/profiles/cc-stub-inspection.json": "d0a2edf68c5473137d1953208bd9649775e4456b7204170150e5e3475de01335"
+    "build/cc-bootstrap-stub.elf": "c299a37fae4dbbb53c9f4e210b962c687491f614a001e46c0c337552e97e63ac",
+    "tools/profiles/cc-stub-inspection.json": "9948403da902b0cff6bfafe91313bd1ea89b06752e95298554c2225e56d6c810"
   },
   "findings": [
-    "Four registered FDEs cover entry, registration, cache callback and worker.",
-    "CIE personality reference is indirect PC-relative to state+0x210; code, LSDA and FDE records remain in the copied text image.",
-    "Catch-all landing pads cover Evaluate and the matching native string free.",
-    "Entry preserves six argument registers and original stack pointer before tail forwarding.",
-    "Registration is checked through the target cache before Evaluate."
+    "Five FDEs cover 0..28, 40..608, 608..1029, 1029..1591 and 1591..1665.",
+    "The native gate, setter and Evaluate remain inside catch-all LSDA 245..458; all helper calls have CFI and unwind through the worker catch.",
+    "Six original arguments, entry RSP, original tail forwarding, CXA thunk offsets and personality +0x210 remain unchanged. State is exactly 0x438; no remaining dynamic relocations.",
+    "Only native result -1000 with raw source -1000, matching service, not playing and empty source URI permits configuration. Positive removed or paused sources skip configuration while still evaluating the UI.",
+    "Two passes require stable CURRENT 1..20 with both CURRENT and slot 20 empty. CURRENT 0 or proven native initial -3002 skips the invalid current query and requires slot 20 empty twice.",
+    "API guards pin exact firmware, installed SELF SHA256, named export offsets, executable ranges, entry bytes and module identities. When the generated configure flag is 0, the installer skips all added guards, hashes and native calls.",
+    "Optional diagnostics contain integer fields and only four-byte source/context URI prefixes. Progress is native int32 +0x14; duration is native int32 +0x10."
   ],
   "limitations": [
     "Static review only; runtime acceptance and UI installation are not yet observed.",
     "The target registration helper can allocate when its cache is full and does not check malloc failure.",
     "Native C++ handling does not recover from invalid memory access or unrelated process failures.",
-    "Registered code, FDE, LSDA and personality storage must remain mapped until ShellUI exits."
+    "Registered code, FDE, LSDA and personality storage must remain mapped until ShellUI exits.",
+    "After removal, slot 20 can retain a positive native source ID even when the managed current-source getter is -1000. Configuration is conservatively skipped in that case; a fresh initialized slot has the supported -1000 sentinel."
   ]
 }

@@ -50,4 +50,13 @@ struct nd_cc_libc_identity {
  * and own read credentials. No target calls, resolution by guessing, writes,
  * or capture files. Uses the captured libc handle/base/SELF/code profile. */
 int nd_cc_guard_libc(pid_t expected_pid, struct nd_cc_libc_identity *result);
+struct nd_cc_feature0_identity {
+    struct nd_cc_guard_module module;
+    uint64_t setter, resolved, get_service, get_info;
+    uint32_t entry_guard_mask;
+    int read_error;
+    const char *failure;
+    int accepted;
+};
+int nd_cc_guard_feature0(pid_t pid, struct nd_cc_feature0_identity *result);
 #endif

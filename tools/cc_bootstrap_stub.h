@@ -65,6 +65,17 @@ struct nd_bootstrap_state {
     uint32_t eh_failure; /* 0 OK; 1 bindings; 2 image; 3 count; 4 verification */
     uint32_t forward_ready;
     struct nd_fde_expectation eh_expected[ND_STUB_MAX_FDES];
+    uint64_t feature0_setter;
+    uint32_t feature0_enabled;
+    uint32_t feature0_attempted;
+    int32_t feature0_result;
+    uint32_t feature0_reserved;
+    uint64_t feature0_get_service, feature0_get_info;
+    uint32_t feature0_gate_enabled, feature0_gate_attempted;
+    int32_t feature0_gate_result, feature0_gate_service;
+    int32_t feature0_gate_current_result, feature0_gate_slot_result;
+    uint32_t feature0_gate_queries, feature0_gate_canaries;
+    struct { int32_t src_id, service, playing, progress, duration; uint32_t uri_head, context_head, seen; } feature0_gate_shape[2];
 };
 ND_STATIC_ASSERT(offsetof(struct nd_bootstrap_state, cxa_begin_catch) == 0x1f0, "begin thunk");
 ND_STATIC_ASSERT(offsetof(struct nd_bootstrap_state, cxa_end_catch) == 0x1f8, "end thunk");

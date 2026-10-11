@@ -1,14 +1,24 @@
 # Contributing
 
-Run `npm test` before submitting changes. For UI/native changes, also build with
-the exact supported Hermes/SDK toolchain and document what was actually checked
-on hardware. Distinguish offline checks from console validation.
+Run `npm run format:check`, `npm test` and build with the supported SDK/Hermes
+toolchain. For runtime
+changes, report what you checked on a console and what remains untested.
 
-Keep configuration in ignored `config.local.json`; never commit tokens, signed
-stream URLs, passwords, console reports, Sony binaries or copyrighted media.
-Do not weaken firmware, ownership, runtime, rollback or publication guards to
-make another firmware work. A new firmware requires a separately established
-ABI profile and validation. Changes to the exception barrier require a fresh
-source, assembly, CFI and LSDA review before updating its recorded fingerprints.
+Keep credentials, tokens, signed stream URLs, console captures and copyrighted
+binaries out of commits. Use `config.local.json` for your server.
 
-Contributions are licensed under GPL-3.0-or-later.
+Preserve firmware, ownership and rollback checks. New firmware needs a verified
+ABI profile. Bootstrap changes need a source, assembly, CFI and LSDA review
+before updating `tools/CC_BARRIER_REVIEW.json`.
+
+Contributions use GPL-3.0-or-later.
+
+UI translations live in `ui/i18n.mjs`. Keep each language column aligned with
+`keys`, translate every entry and retain short button labels for the Music card.
+Add regional locale coverage in `ui/i18n.test.mjs` when adding a language.
+
+Run `npm run format` for JavaScript and documentation. Python tools use Black
+24.10.0; native installer sources use clang-format 18 and `.clang-format`.
+Keep the reviewed bootstrap source and header byte-for-byte unchanged unless
+you are reviewing a bootstrap change. Generated firmware tables and inspection
+profiles are not formatter inputs.

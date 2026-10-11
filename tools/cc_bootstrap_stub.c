@@ -11,6 +11,50 @@ const unsigned char nd_eh_frame_start[], nd_eh_frame_end[];
 }
 typedef void (*nd_eval_fn)(uint64_t, const void *, uint64_t, const char *, int,
                          struct nd_native_exception *);
+typedef int32_t (*nd_feature0_fn)(int32_t);
+typedef int32_t (*nd_service_fn)(void);
+typedef int32_t (*nd_info_fn)(int32_t,void *);
+/* Empty sentinel is the exact native service table state. No guessed CURRENT
+ * pointer, source adoption, source removal or pending-play retries. */
+static bool nd_empty_music_gate(struct nd_bootstrap_state *s)
+{
+    struct { uint64_t before; int32_t info[0x2588/4]; uint64_t after; } out;
+    const uint64_t marker=UINT64_C(0x736f75726365676f);
+    s->feature0_gate_attempted=1; s->feature0_gate_result=-1;
+    if (!s->feature0_get_service || !s->feature0_get_info) return false;
+    int32_t stable_service=-1;
+    for (unsigned pass=0;pass<2;++pass) {
+        int32_t service=((nd_service_fn)(uintptr_t)s->feature0_get_service)();
+        s->feature0_gate_service=service;
+        const bool unselected=service==0 || service==-3002;
+        if ((!unselected && (service<1 || service>20)) || (pass && service!=stable_service)) { s->feature0_gate_result=1; return false; }
+        stable_service=service;
+        if (unselected) s->feature0_gate_current_result=-3001; /* Exact managed no-CURRENT result; no invalid native query. */
+        for (unsigned which=unselected?1:0;which<2;++which) {
+            const int32_t selected=which?20:service;
+            out.before=marker; out.after=marker;
+            int32_t r=((nd_info_fn)(uintptr_t)s->feature0_get_info)(selected,out.info);
+            ++s->feature0_gate_queries;
+            if (which) s->feature0_gate_slot_result=r; else s->feature0_gate_current_result=r;
+            if (out.before!=marker || out.after!=marker) { s->feature0_gate_result=2; return false; }
+            ++s->feature0_gate_canaries;
+            const int32_t *fields=(const int32_t *)out.info;
+            const unsigned char *raw=(const unsigned char *)out.info;
+            const uint32_t context_head=(uint32_t)raw[0x44] | (uint32_t)raw[0x45]<<8 | (uint32_t)raw[0x46]<<16 | (uint32_t)raw[0x47]<<24;
+            s->feature0_gate_shape[which].src_id=fields[1];
+            s->feature0_gate_shape[which].service=fields[2];
+            s->feature0_gate_shape[which].playing=fields[7];
+            s->feature0_gate_shape[which].progress=fields[5];
+            s->feature0_gate_shape[which].duration=fields[4];
+            s->feature0_gate_shape[which].uri_head=(uint32_t)out.info[0xc4/4];
+            s->feature0_gate_shape[which].context_head=context_head;
+            s->feature0_gate_shape[which].seen=1;
+            if (r!=-1000 || fields[1]!=-1000 || fields[2]!=selected || fields[7]!=0 || out.info[0xc4/4]!=0) { s->feature0_gate_result=3; return false; }
+        }
+        if (((nd_service_fn)(uintptr_t)s->feature0_get_service)()!=service) { s->feature0_gate_result=4; return false; }
+    }
+    s->feature0_gate_result=0; return true;
+}
 typedef void (*nd_free_fn)(uint64_t);
 typedef void (*nd_add_fde_fn)(uintptr_t);
 typedef void (*nd_fde_callback)(uint64_t, uint64_t, uint64_t, uint64_t);
@@ -124,6 +168,17 @@ uint64_t nd_bootstrap_worker(uint64_t executor)
         if (s->identity_accepted && nd_register_frames(s)) {
             try {
                 struct nd_native_exception exception = {};
+                const bool empty = !s->feature0_gate_enabled || nd_empty_music_gate(s);
+                if (empty && s->feature0_enabled == 1 && s->feature0_setter) {
+                    s->feature0_attempted = 1;
+                    s->feature0_result = ((nd_feature0_fn)(uintptr_t)s->feature0_setter)(0);
+                }
+                if (empty && s->feature0_enabled && (!s->feature0_attempted || s->feature0_result)) {
+                    __atomic_store_n(&s->state, 2, __ATOMIC_RELEASE);
+                    __atomic_store_n(&s->forward_ready, 1, __ATOMIC_RELEASE);
+                    __atomic_sub_fetch(&s->active_calls, 1, __ATOMIC_SEQ_CST);
+                    return s->original_call;
+                }
                 s->evaluation_attempted = 1;
                 ((nd_eval_fn)(uintptr_t)s->evaluate)(executor,
                     (const void *)(uintptr_t)s->script, s->script_bytes,

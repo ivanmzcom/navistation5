@@ -8,15 +8,22 @@ import tempfile
 import unittest
 
 ROOT = Path(__file__).resolve().parents[1]
-spec = importlib.util.spec_from_file_location('package', ROOT/'tools/build_cc_package.py')
+spec = importlib.util.spec_from_file_location(
+    "package", ROOT / "tools/build_cc_package.py"
+)
 package = importlib.util.module_from_spec(spec)
 spec.loader.exec_module(package)
 
+
 class AutomaticIdentityTests(unittest.TestCase):
     def test_live_identity_is_portable_but_transaction_is_pinned(self):
-        source = (ROOT/'tools/cc_installer.c').read_text()
-        policies = source[source.index('static int package_identity('):source.index('static int write_and_verify(')]
-        harness = r'''
+        source = (ROOT / "tools/cc_installer.c").read_text()
+        policies = source[
+            source.index("static int package_identity(") : source.index(
+                "static int write_and_verify("
+            )
+        ]
+        harness = r"""
 #include <assert.h>
 #include <string.h>
 #include "cc_executor_guard.h"
@@ -56,16 +63,32 @@ int main(void) {
  b=a;strcpy(b.bundle_path,"other");assert(!same_identity(&a,&b));
  return 0;
 }
-'''.replace('POLICIES',policies)
+""".replace(
+            "POLICIES", policies
+        )
         with tempfile.TemporaryDirectory() as tmp:
-            p=Path(tmp);(p/'policy.c').write_text(harness)
-            for mode in [0,1]:
-                subprocess.run(['clang','-std=c11','-Wall','-Wextra','-Werror',f'-DND_CC_AUTODETECT_IDENTITY={mode}',
-                    '-I'+str(ROOT/'tools'),str(p/'policy.c'),'-o',str(p/'policy')],check=True)
-                subprocess.run([str(p/'policy')],check=True)
+            p = Path(tmp)
+            (p / "policy.c").write_text(harness)
+            for mode in [0, 1]:
+                subprocess.run(
+                    [
+                        "clang",
+                        "-std=c11",
+                        "-Wall",
+                        "-Wextra",
+                        "-Werror",
+                        f"-DND_CC_AUTODETECT_IDENTITY={mode}",
+                        "-I" + str(ROOT / "tools"),
+                        str(p / "policy.c"),
+                        "-o",
+                        str(p / "policy"),
+                    ],
+                    check=True,
+                )
+                subprocess.run([str(p / "policy")], check=True)
 
     def test_second_load_preserves_audio_and_rejects_conflicts(self):
-        script = r'''
+        script = r"""
 const vm=require('node:vm'),assert=require('node:assert/strict');
 const source=SOURCE;
 function run(kind) {
@@ -90,13 +113,29 @@ function run(kind) {
 // Preserve data descriptors, including nonenumerable own controller.
 // vm contexts cannot be spread: use the original object directly.
 for(const kind of ['empty','good','writable','failed','conflict','removed','disposed','mismatch','cleanup','failed-renderer'])run(kind);
-'''.replace('SOURCE',json.dumps(package.automatic_existing_source()))
-        script=script.replace("{...context,install(){installed++},Object,Array}","Object.assign(context,{install(){installed++},Object,Array})")
-        subprocess.run(['node','-e',script],check=True)
+""".replace(
+            "SOURCE", json.dumps(package.automatic_existing_source())
+        )
+        script = script.replace(
+            "{...context,install(){installed++},Object,Array}",
+            "Object.assign(context,{install(){installed++},Object,Array})",
+        )
+        subprocess.run(["node", "-e", script], check=True)
 
     def test_cli_requires_exactly_one_identity_mode(self):
-        for args in [[],['--auto-detect','--identity','unused']]:
-            result=subprocess.run(['python3',str(ROOT/'tools/build_cc_package.py'),'--package-id','test',*args],capture_output=True)
-            self.assertEqual(result.returncode,2)
+        for args in [[], ["--auto-detect", "--identity", "unused"]]:
+            result = subprocess.run(
+                [
+                    "python3",
+                    str(ROOT / "tools/build_cc_package.py"),
+                    "--package-id",
+                    "test",
+                    *args,
+                ],
+                capture_output=True,
+            )
+            self.assertEqual(result.returncode, 2)
 
-if __name__=='__main__':unittest.main()
+
+if __name__ == "__main__":
+    unittest.main()

@@ -16,7 +16,7 @@ INSTALLER_PACKAGE ?= ../build/cc-install-payload.h
 INSTALLER_SOURCES := cc_installer.c cc_executor_guard.c cc_bootstrap_observe.c remote_trace.c raw_syscall4.S
 INSTALLER_DEPS := $(INSTALLER_SOURCES) remote_trace_core.inc remote_trace.h \
   cc_executor_guard.h cc_bootstrap_stub.h cc_bootstrap_observe.h cc_executor_native_route_1320.h \
-  module_probe.c $(INSTALLER_PACKAGE) cc_installer.mk
+  shellui_module_helpers.inc $(INSTALLER_PACKAGE) cc_installer.mk
 .PHONY: all
 all: $(INSTALLER_OUT)
 $(INSTALLER_OUT): $(INSTALLER_DEPS)

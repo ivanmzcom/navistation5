@@ -1,12 +1,5 @@
 #!/usr/bin/env python3
-"""Compile a dormant native installation package for one captured CC generation.
-
-Publication requires an explicitly selected, byte-identical reviewed barrier.
-Building never runs target JavaScript, tests, a payload, or a network request.
-The status operation reads the last published diagnostic data only. Its bounded
-NDSTATUS/NDJSXSTATUS exception is an intentional return channel for the existing native
-exception-message observer, not a new startup failure or a JavaScript test.
-"""
+"""Package Hermes UI and the reviewed bootstrap for a guarded CC install."""
 import argparse
 import hashlib
 import json
@@ -17,48 +10,111 @@ import struct
 import subprocess
 
 
-STATUS_CODES = {name: index + 1 for index, name in enumerate([
-    "created", "scheduled", "waiting-capture", "require-captured",
-    "waiting-modules", "installed", "capture-failed", "install-failed",
-    "failed", "disposed", "global-intrinsics-unavailable",
-    "loaded-base-timer-module-unavailable", "clock-unavailable",
-    "startup-preflight-or-scheduling-failed", "deferred-callback-failed",
-    "startup-deadline", "startup-poll-limit", "initial-dispatch-deadline",
-    "unexpected-driver-state", "diagnostic-slot-changed", "explicit-dispose",
-    "arming", "armed", "captured", "finished", "cancelled", "rejected",
-    "expired", "not-created", "pending-local-render", "initializing", "ready",
-    "unavailable", "external-bindings", "call-limit", "observer-error", "capture-deadline",
-    # Append only: captured NDSTATUS results use the earlier numeric codes.
-    "runtime-changed", "element-guard-failed", "direct-ui-install-failed",
-    "NDUI: renderer-failed", "NDUI: renderer-context", "NDUI: renderer-runtime",
-    "NDUI: renderer-proof", "NDUI: base-loader", "NDUI: react-jsx-shape",
-    "NDUI: initialization-state", "NDUI: local-screen-create",
-    "NDUI: local-screen-shape", "NDUI: local-render-failed", "NDUI: session-dispose-failed",
-    *["NDUI: %s-%s" % (module, failure)
-      for module in ("react", "jsx", "view", "text", "button", "text-input", "focus-layer")
-      for failure in ("factory", "initialize", "cache")],
-    *["NDUI: %s-component" % module
-      for module in ("view", "text", "button", "text-input", "focus-layer")],
-])}
+STATUS_CODES = {
+    name: index + 1
+    for index, name in enumerate(
+        [
+            "created",
+            "scheduled",
+            "waiting-capture",
+            "require-captured",
+            "waiting-modules",
+            "installed",
+            "capture-failed",
+            "install-failed",
+            "failed",
+            "disposed",
+            "global-intrinsics-unavailable",
+            "loaded-base-timer-module-unavailable",
+            "clock-unavailable",
+            "startup-preflight-or-scheduling-failed",
+            "deferred-callback-failed",
+            "startup-deadline",
+            "startup-poll-limit",
+            "initial-dispatch-deadline",
+            "unexpected-driver-state",
+            "diagnostic-slot-changed",
+            "explicit-dispose",
+            "arming",
+            "armed",
+            "captured",
+            "finished",
+            "cancelled",
+            "rejected",
+            "expired",
+            "not-created",
+            "pending-local-render",
+            "initializing",
+            "ready",
+            "unavailable",
+            "external-bindings",
+            "call-limit",
+            "observer-error",
+            "capture-deadline",
+            # Append only: captured NDSTATUS results use the earlier numeric codes.
+            "runtime-changed",
+            "element-guard-failed",
+            "direct-ui-install-failed",
+            "NDUI: renderer-failed",
+            "NDUI: renderer-context",
+            "NDUI: renderer-runtime",
+            "NDUI: renderer-proof",
+            "NDUI: base-loader",
+            "NDUI: react-jsx-shape",
+            "NDUI: initialization-state",
+            "NDUI: local-screen-create",
+            "NDUI: local-screen-shape",
+            "NDUI: local-render-failed",
+            "NDUI: session-dispose-failed",
+            *[
+                "NDUI: %s-%s" % (module, failure)
+                for module in (
+                    "react",
+                    "jsx",
+                    "view",
+                    "text",
+                    "button",
+                    "text-input",
+                    "focus-layer",
+                )
+                for failure in ("factory", "initialize", "cache")
+            ],
+            *[
+                "NDUI: %s-component" % module
+                for module in ("view", "text", "button", "text-input", "focus-layer")
+            ],
+        ]
+    )
+}
 STATUS_FIELDS = {
     "s": "slot: 0 absent, 1 own undefined, 2 own object, 3 accessor, 4 other value",
-    "p": "phase", "r": "reason", "d": "driver.phase",
-    "c": "driver.capture.state", "q": "capture.reason; lastAttempt fallback",
-    "l": "lastAttempt.phase", "lc": "lastAttempt.capture.state",
-    "n": "polls (0..999)", "k": "capture.calls; lastAttempt fallback (0..999999)",
-    "m": "driver.missingModules.length (0..99)", "u": "driver.uiInitialization",
+    "p": "phase",
+    "r": "reason",
+    "d": "driver.phase",
+    "c": "driver.capture.state",
+    "q": "capture.reason; lastAttempt fallback",
+    "l": "lastAttempt.phase",
+    "lc": "lastAttempt.capture.state",
+    "n": "polls (0..999)",
+    "k": "capture.calls; lastAttempt fallback (0..999999)",
+    "m": "driver.missingModules.length (0..99)",
+    "u": "driver.uiInitialization",
     "g": "capture.matchStage; lastAttempt fallback (0..6)",
 }
 STATUS_JSX_FIELDS = {
     "s": STATUS_FIELDS["s"],
-    "p": "phase", "r": "reason", "d": "driver.phase",
+    "p": "phase",
+    "r": "reason",
+    "d": "driver.phase",
     "a": "driver.hook.active: 1 true, 0 false, -1 absent or not boolean",
     "x": "driver.hook.removed: 1 true, 0 false, -1 absent or not boolean",
     "c": "driver.hook.candidates (0..999999)",
     "n": "driver.hook.substitutions (0..999999)",
-    "u": "driver.renderer.phase", "v": "driver.renderer.renders (0..999999)",
+    "u": "driver.renderer.phase",
+    "v": "driver.renderer.renders (0..999999)",
     "i": "driver.renderer.sessionInitialization",
-    "h": "driver.hook.reason", "e": "driver.renderer.reason",
+    "h": "driver.hook.reason",
+    "e": "driver.renderer.reason",
 }
 
 
@@ -74,9 +130,13 @@ def status_source():
     # symbolic session reason adds at most 59 bytes (including its delimiter).
     if max(STATUS_CODES.values()) > 99:
         raise ValueError("status codes exceed the bounded two-digit wire format")
-    cases = "\n".join("case %s: return %d;" % (json.dumps(name), code)
-                      for name, code in STATUS_CODES.items())
-    return ("""(function () {
+    cases = "\n".join(
+        "case %s: return %d;" % (json.dumps(name), code)
+        for name, code in STATUS_CODES.items()
+    )
+    return (
+        (
+            """(function () {
 var own = Object.getOwnPropertyDescriptor;
 function read(object, key) {
   if (!object || (typeof object !== 'object' && typeof object !== 'function')) return undefined;
@@ -137,7 +197,11 @@ var message = 'NDSTATUS:[' + shape +
 if (message.length > 64) throw new Error('NDSTATUS:[-2]');
 throw new Error(message);
 })();
-""").replace("CASES", cases).encode("ascii")
+"""
+        )
+        .replace("CASES", cases)
+        .encode("ascii")
+    )
 
 
 def failed_startup_recovery_source():
@@ -417,28 +481,45 @@ def sections(path):
     data = path.read_bytes()
     if data[:6] != b"\x7fELF\x02\x01":
         raise ValueError("Expected ELF64 little endian")
-    if struct.unpack_from("<H", data, 16)[0] != 2 or struct.unpack_from("<H", data, 18)[0] != 62:
+    if (
+        struct.unpack_from("<H", data, 16)[0] != 2
+        or struct.unpack_from("<H", data, 18)[0] != 62
+    ):
         raise ValueError("Expected static x86-64 executable image")
     if struct.unpack_from("<Q", data, 24)[0] != 0:
         raise ValueError("Stub entry must be exactly zero")
     offset = struct.unpack_from("<Q", data, 40)[0]
     stride, count, names_index = struct.unpack_from("<HHH", data, 58)
-    if stride != 64 or not 0 < names_index < count or offset + count * stride > len(data):
+    if (
+        stride != 64
+        or not 0 < names_index < count
+        or offset + count * stride > len(data)
+    ):
         raise ValueError("Invalid section table")
-    raw = [struct.unpack_from("<IIQQQQIIQQ", data, offset + i * stride) for i in range(count)]
+    raw = [
+        struct.unpack_from("<IIQQQQIIQQ", data, offset + i * stride)
+        for i in range(count)
+    ]
     n = raw[names_index]
-    names = data[n[4]:n[4] + n[5]]
+    names = data[n[4] : n[4] + n[5]]
     result = {}
     for item in raw:
-        name = names[item[0]:].split(b"\0", 1)[0].decode("ascii")
+        name = names[item[0] :].split(b"\0", 1)[0].decode("ascii")
         if item[1] in (4, 9) and item[5]:
             raise ValueError("Unapplied relocations in stub")
         if item[4] + item[5] > len(data) and item[1] != 8:
             raise ValueError("Section extends outside image")
-        result[name] = {"address": item[3], "size": item[5], "data": data[item[4]:item[4] + item[5]]}
+        result[name] = {
+            "address": item[3],
+            "size": item[5],
+            "data": data[item[4] : item[4] + item[5]],
+        }
     if result[".text"]["address"] != 0 or not 0 < result[".text"]["size"] < 0x4000:
         raise ValueError("Unexpected stub code range")
-    if result[".nd_state"]["address"] != 0x4000 or result[".nd_state"]["size"] >= 0x4000:
+    if (
+        result[".nd_state"]["address"] != 0x4000
+        or result[".nd_state"]["size"] >= 0x4000
+    ):
         raise ValueError("Unexpected stub state range")
     for name, item in result.items():
         if name in (".got", ".dynamic", ".dynsym", ".rela.dyn") and item["size"]:
@@ -447,29 +528,49 @@ def sections(path):
 
 
 def array(name, data):
-    return "static const unsigned char " + name + "[] = {\n" + "\n".join(
-        "    " + ",".join("0x%02x" % v for v in data[i:i + 16]) + ","
-        for i in range(0, len(data), 16)) + "\n};\n"
+    return (
+        "static const unsigned char "
+        + name
+        + "[] = {\n"
+        + "\n".join(
+            "    " + ",".join("0x%02x" % v for v in data[i : i + 16]) + ","
+            for i in range(0, len(data), 16)
+        )
+        + "\n};\n"
+    )
 
 
 def reviewed_barrier(root, stub):
     """Bind readiness to the exact statically reviewed sources and ELF image."""
     path = root / "tools/CC_BARRIER_REVIEW.json"
     review = json.loads(path.read_text())
-    if review.get("schema") != 1 or review.get("review") != "static-source-assembly-cfi-lsda":
+    if (
+        review.get("schema") != 1
+        or review.get("review") != "static-source-assembly-cfi-lsda"
+    ):
         raise ValueError("Unrecognized native barrier review")
     for name, digest in review["files"].items():
         if sha((root / name).read_bytes()) != digest:
             raise ValueError("Reviewed barrier changed: " + name)
-    if sha(stub[".text"]["data"]) != review["codeSha256"] or stub[".nd_state"]["size"] != 0x3b0:
+    if (
+        sha(stub[".text"]["data"]) != review["codeSha256"]
+        or stub[".nd_state"]["size"] != 0x438
+    ):
         raise ValueError("Reviewed native layout changed")
     inspection = json.loads((root / review["inspection"]).read_text())
-    if inspection["image"]["codeSha256"] != review["codeSha256"] or len(inspection["fdes"]) != 4:
+    if (
+        inspection["image"]["codeSha256"] != review["codeSha256"]
+        or len(inspection["fdes"]) != 5
+    ):
         raise ValueError("Reviewed unwind metadata changed")
-    if any(c["fdeEncoding"] != 0x1b for c in inspection["cies"]):
+    if any(c["fdeEncoding"] != 0x1B for c in inspection["cies"]):
         raise ValueError("Unexpected native FDE encoding")
-    return {"path": str(path.relative_to(root)), "sha256": sha(path.read_bytes()),
-            "kind": review["review"], "runtimeVerified": False}
+    return {
+        "path": str(path.relative_to(root)),
+        "sha256": sha(path.read_bytes()),
+        "kind": review["review"],
+        "runtimeVerified": False,
+    }
 
 
 def automatic_existing_source():
@@ -498,26 +599,53 @@ def main():
     parser = argparse.ArgumentParser(description=__doc__)
     target = parser.add_mutually_exclusive_group(required=True)
     target.add_argument("--identity", type=Path)
-    target.add_argument("--auto-detect", action="store_true",
-                        help="Discover and pin the current CC identity at load time; no session capture input")
+    target.add_argument(
+        "--auto-detect",
+        action="store_true",
+        help="Discover and pin the current CC identity at load time; no session capture input",
+    )
     parser.add_argument("--package-id", required=True)
-    parser.add_argument("--operation", choices=("start", "status"), default="start",
-                        help="start installs the UI; status reads published data via an intentional NDSTATUS exception")
-    parser.add_argument("--reviewed-barrier", action="store_true",
-                        help="Enable only the byte-identical barrier recorded in CC_BARRIER_REVIEW.json")
-    parser.add_argument("--recover-undefined-startup-status", action="store_true",
-                        help="Recover the exact undefined diagnostic left by the failed first startup")
-    parser.add_argument("--recover-failed-startup", action="store_true",
-                        help="Retire only a confirmed capture-failed startup whose disposal and rollback have no conflicts")
-    parser.add_argument("--replace-direct-startup", action="store_true",
-                        help="Replace our direct JSX startup only after idle-session and complete disposal/rollback guards")
-    parser.add_argument("--audio-token-file", type=Path,
-                        help="Private 64-hex token for the local audio service; embedded only in the executable package")
+    parser.add_argument(
+        "--operation",
+        choices=("start", "status"),
+        default="start",
+        help="start installs the UI; status reads published data via an intentional NDSTATUS exception",
+    )
+    parser.add_argument(
+        "--reviewed-barrier",
+        action="store_true",
+        help="Enable only the byte-identical barrier recorded in CC_BARRIER_REVIEW.json",
+    )
+    parser.add_argument(
+        "--recover-undefined-startup-status",
+        action="store_true",
+        help="Recover the exact undefined diagnostic left by the failed first startup",
+    )
+    parser.add_argument(
+        "--recover-failed-startup",
+        action="store_true",
+        help="Retire only a confirmed capture-failed startup whose disposal and rollback have no conflicts",
+    )
+    parser.add_argument(
+        "--replace-direct-startup",
+        action="store_true",
+        help="Replace our direct JSX startup only after idle-session and complete disposal/rollback guards",
+    )
+    parser.add_argument(
+        "--audio-token-file",
+        type=Path,
+        help="Private 64-hex token for the local audio service; embedded only in the executable package",
+    )
     args = parser.parse_args()
     if not re.fullmatch(r"[A-Za-z0-9_-]{1,48}", args.package_id):
         parser.error("package-id must be 1–48 ASCII letters/digits/underscore/hyphen")
-    recovery_count = sum((args.recover_undefined_startup_status, args.recover_failed_startup,
-                          args.replace_direct_startup))
+    recovery_count = sum(
+        (
+            args.recover_undefined_startup_status,
+            args.recover_failed_startup,
+            args.replace_direct_startup,
+        )
+    )
     if args.operation == "status" and recovery_count:
         parser.error("status cannot clean or modify the existing diagnostic slot")
     if recovery_count > 1:
@@ -530,13 +658,19 @@ def main():
             parser.error("audio-token-file is only valid for start")
         token = args.audio_token_file.read_text().strip()
         if not re.fullmatch(r"[0-9a-f]{64}", token):
-            parser.error("audio-token-file must contain exactly 64 lowercase hex characters")
+            parser.error(
+                "audio-token-file must contain exactly 64 lowercase hex characters"
+            )
         audio_config = {"token": token}
         # The compiler also writes a private bytecode file. Set creation modes
         # before any secret-bearing write; umask alone does not tighten an old
         # output's existing permissions when it is truncated and rewritten.
         os.umask(0o077)
-        for name in ("navidrome-cc-entry.js", "navidrome-cc-entry.hbc", "cc-install-payload.h"):
+        for name in (
+            "navidrome-cc-entry.js",
+            "navidrome-cc-entry.hbc",
+            "cc-install-payload.h",
+        ):
             destination = out / name
             if destination.exists():
                 destination.chmod(0o600)
@@ -554,39 +688,78 @@ def main():
         if b"startLocalMusic" not in bundled:
             raise ValueError("The UI bundle does not export the explicit startup API")
     if args.auto_detect:
-        identity = {"pid": 0, "executor": 0, "runtime": 0, "appInstanceId": 0, "jsThread": 0}
+        identity = {
+            "pid": 0,
+            "executor": 0,
+            "runtime": 0,
+            "appInstanceId": 0,
+            "jsThread": 0,
+        }
     else:
         route = json.loads(args.identity.read_text())
-        if route.get("captureProfile") != "cc-executor-route-13200006-v3" or not route.get("complete") or route.get("failure"):
+        if (
+            route.get("captureProfile") != "cc-executor-route-13200006-v3"
+            or not route.get("complete")
+            or route.get("failure")
+        ):
             raise ValueError("Requires complete v3 CC identity capture")
         if route["pid"] != route["finalPid"] or route["firmware"] != "0x13200006":
             raise ValueError("Capture generation is inconsistent")
-        for key in ("initialCredentialScope", "finalCredentialScope", "mapCredentialScope"):
+        for key in (
+            "initialCredentialScope",
+            "finalCredentialScope",
+            "mapCredentialScope",
+        ):
             if route[key].get("restored") is not True:
                 raise ValueError("Capture credentials were not restored")
-        if not all(m["guardAccepted"] and m["identityUnchanged"] for m in route["modules"]):
+        if not all(
+            m["guardAccepted"] and m["identityUnchanged"] for m in route["modules"]
+        ):
             raise ValueError("Capture module guard failed")
         reads = {r["name"]: r for r in route["reads"]}
-        if not all(r["stable"] and not r["initialError"] and not r["finalError"] for r in reads.values()):
+        if not all(
+            r["stable"] and not r["initialError"] and not r["finalError"]
+            for r in reads.values()
+        ):
             raise ValueError("Identity readback was unstable")
+
         def u64(name):
             b = bytes.fromhex(reads[name]["initialHex"])
             if len(b) != 8:
                 raise ValueError("Unexpected pointer/ID width")
             return int.from_bytes(b, "little")
+
         def text16(name):
-            return bytes.fromhex(reads[name]["initialHex"]).decode("utf-16-le").rstrip("\0")
-        if text16("application_name_utf16le") != "rnps-control-center" or text16("application_bundle_utf16le") != "/system_ex/rnps/apps/NPXS40003/application.ps.bundle":
+            return (
+                bytes.fromhex(reads[name]["initialHex"])
+                .decode("utf-16-le")
+                .rstrip("\0")
+            )
+
+        if (
+            text16("application_name_utf16le") != "rnps-control-center"
+            or text16("application_bundle_utf16le")
+            != "/system_ex/rnps/apps/NPXS40003/application.ps.bundle"
+        ):
             raise ValueError("Capture is not the expected Control Center application")
-        identity = {"pid": route["pid"], "executor": u64("executor_native"),
-                    "runtime": u64("native_runtime_pointer"),
-                    "appInstanceId": u64("native_app_instance_id_i64"),
-                    "jsThread": u64("executor_js_thread")}
+        identity = {
+            "pid": route["pid"],
+            "executor": u64("executor_native"),
+            "runtime": u64("native_runtime_pointer"),
+            "appInstanceId": u64("native_app_instance_id_i64"),
+            "jsThread": u64("executor_js_thread"),
+        }
     proof = {
-        "firmware": 0x13200006, "titleId": "NPXS40003", "isolatedRealm": True,
+        "firmware": 0x13200006,
+        "titleId": "NPXS40003",
+        "isolatedRealm": True,
         "phase": "application-running",
-        "executorIdentity": ("native-autodetected-current-cc" if args.auto_detect else
-                             "pid%d-cc-%x-%x" % (identity["pid"], identity["executor"], identity["appInstanceId"])),
+        "executorIdentity": (
+            "native-autodetected-current-cc"
+            if args.auto_detect
+            else "pid%d-cc-%x-%x"
+            % (identity["pid"], identity["executor"], identity["appInstanceId"])
+        ),
         "bundleSha256": "8a5ad941d8ca0dedad99df7c1f09c5fc36ce9752a5d0954b92401d24aad8990e",
         "baseDllSha256": "924e90c2257cd6b0a1e895dc45abf4882ddd3504a6c32964ff74d259b975092c",
     }
@@ -624,10 +797,16 @@ function disposeFailedStartup() {
 if (startup.phase === 'failed') { var failure = startup.reason; disposeFailedStartup(); throw new Error('Navidrome startup: ' + failure); }
 try { Object.defineProperty(globalThis, '__navidromeLocalMusicControl', {value: controller, writable: false, enumerable: false, configurable: true}); } catch (error) { disposeFailedStartup(); throw error; }
 })();
-""".replace("PROOF", json.dumps(proof, separators=(",", ":"))).replace(
-        "AUDIO_CONFIG", json.dumps(audio_config, separators=(",", ":")))
-    source = (status_source() if args.operation == "status" else
-              prefix.encode("ascii") + bundled + suffix.encode("ascii"))
+""".replace(
+        "PROOF", json.dumps(proof, separators=(",", ":"))
+    ).replace(
+        "AUDIO_CONFIG", json.dumps(audio_config, separators=(",", ":"))
+    )
+    source = (
+        status_source()
+        if args.operation == "status"
+        else prefix.encode("ascii") + bundled + suffix.encode("ascii")
+    )
     entry = out / "navidrome-cc-entry.js"
     bytecode = out / "navidrome-cc-entry.hbc"
     entry.write_bytes(source)
@@ -636,35 +815,71 @@ try { Object.defineProperty(globalThis, '__navidromeLocalMusicControl', {value: 
     compiler = Path(profile["tools"]["hermesc"]["path"])
     if sha(compiler.read_bytes()) != profile["tools"]["hermesc"]["sha256"]:
         raise ValueError("Hermes compiler identity changed")
-    subprocess.run([str(compiler), "-O", "-emit-binary", "-out", bytecode.name, entry.name], cwd=out, check=True)
-    hbc_data = bytecode.read_bytes(); hbc(hbc_data)
+    subprocess.run(
+        [str(compiler), "-O", "-emit-binary", "-out", bytecode.name, entry.name],
+        cwd=out,
+        check=True,
+    )
+    hbc_data = bytecode.read_bytes()
+    hbc(hbc_data)
     stub = sections(out / "cc-bootstrap-stub.elf")
     code = stub[".text"]["data"]
+    # Ten bytecode pages plus the two bootstrap pages fit the bounded tracer.
+    if len(hbc_data) > 10 * 16384:
+        raise ValueError(
+            "UI bytecode exceeds the installer's initialized mapping capacity"
+        )
     barrier = reviewed_barrier(root, stub) if args.reviewed_barrier else None
-    meta = {"schema": 1, "packageId": args.package_id, "firmware": "0x13200006",
-            "operation": args.operation, "includesUiBundle": args.operation == "start",
-            "audioControlConfigured": audio_config is not None,
-            "identity": identity, "contextProof": proof,
-            "stubSha256": sha(code), "stubCodeBytes": len(code), "hbcSha256": sha(hbc_data),
-            "hbcBytes": len(hbc_data), "cppBarrierReady": barrier is not None, "barrierReview": barrier,
-            "recoverUndefinedStartupStatus": args.recover_undefined_startup_status,
-            "recoverFailedStartup": args.recover_failed_startup,
-            "replaceDirectStartup": args.replace_direct_startup,
-            "identityMode": "automatic-runtime" if args.auto_detect else "captured-session",
-            "identityEvidenceSha256": None if args.auto_detect else sha(args.identity.read_bytes()),
-            "entrySourceSha256": sha(source), "uiBuildProfileSha256": sha((out / "navidrome-bootstrap.profile.json").read_bytes()),
-            "status": "compiled-ready-for-guarded-publication" if barrier else "compiled-publication-disabled"}
+    configure_http_audio = (
+        args.operation == "start" and audio_config is not None and not recovery_count
+    )
+    meta = {
+        "schema": 1,
+        "packageId": args.package_id,
+        "firmware": "0x13200006",
+        "operation": args.operation,
+        "includesUiBundle": args.operation == "start",
+        "audioControlConfigured": audio_config is not None,
+        "configureHttpAudio": configure_http_audio,
+        "identity": identity,
+        "contextProof": proof,
+        "stubSha256": sha(code),
+        "stubCodeBytes": len(code),
+        "hbcSha256": sha(hbc_data),
+        "hbcBytes": len(hbc_data),
+        "cppBarrierReady": barrier is not None,
+        "barrierReview": barrier,
+        "recoverUndefinedStartupStatus": args.recover_undefined_startup_status,
+        "recoverFailedStartup": args.recover_failed_startup,
+        "replaceDirectStartup": args.replace_direct_startup,
+        "identityMode": "automatic-runtime" if args.auto_detect else "captured-session",
+        "identityEvidenceSha256": (
+            None if args.auto_detect else sha(args.identity.read_bytes())
+        ),
+        "entrySourceSha256": sha(source),
+        "uiBuildProfileSha256": sha(
+            (out / "navidrome-bootstrap.profile.json").read_bytes()
+        ),
+        "status": (
+            "compiled-ready-for-guarded-publication"
+            if barrier
+            else "compiled-publication-disabled"
+        ),
+    }
     if args.operation == "status":
         meta["observation"] = {
             "source": "last published own-data diagnostic snapshot; no refresh",
             "channel": "intentional Error NDSTATUS or NDJSXSTATUS in native exception message; not a startup failure",
-            "messageLimitBytes": 128, "nativeMessageCapacityBytes": 191,
+            "messageLimitBytes": 128,
+            "nativeMessageCapacityBytes": 191,
             "format": "NDSTATUS:[s,p,r,d,c,q,l,lc,n,k,m,u,g]; [-2] means output overflow",
-            "fieldOrder": list(STATUS_FIELDS), "fields": STATUS_FIELDS,
+            "fieldOrder": list(STATUS_FIELDS),
+            "fields": STATUS_FIELDS,
             "directRoute": {
                 "selector": "own-data route equals shared-jsx",
                 "format": "NDJSXSTATUS:[s,p,r,d,a,x,c,n,u,v,i,h,e][|SESSION_REASON]; [-2] means output overflow",
-                "fieldOrder": list(STATUS_JSX_FIELDS), "fields": STATUS_JSX_FIELDS,
+                "fieldOrder": list(STATUS_JSX_FIELDS),
+                "fields": STATUS_JSX_FIELDS,
                 "maximumMessageBytes": 122,
                 "messageLimitBytes": 128,
                 "sessionReason": {
@@ -673,25 +888,39 @@ try { Object.defineProperty(globalThis, '__navidromeLocalMusicControl', {value: 
                     "maximumBytes": 58,
                     "omittedUnlessMatched": True,
                 },
-                "booleanCodes": {"1": "true", "0": "false", "-1": "absent or not boolean"},
+                "booleanCodes": {
+                    "1": "true",
+                    "0": "false",
+                    "-1": "absent or not boolean",
+                },
                 "counterCodes": {"-1": "absent, non-integer or out of bounds"},
             },
-            "valueCodes": {"0": "absent or undefined", "-1": "unknown value",
-                                                       **{str(code): name for name, code in STATUS_CODES.items()}},
-            "limitations": ["Only the first 191 native message bytes are retained, including native prefix.",
-                            "No status method, source accessor, logging hook, UI factory or network operation is invoked.",
-                            "Counters and phases reflect the last published snapshot; this observation never refreshes it.",
-                            "The native observation package still uses a temporary hook and a resident allocation."],
+            "valueCodes": {
+                "0": "absent or undefined",
+                "-1": "unknown value",
+                **{str(code): name for name, code in STATUS_CODES.items()},
+            },
+            "limitations": [
+                "Only the first 191 native message bytes are retained, including native prefix.",
+                "No status method, source accessor, logging hook, UI factory or network operation is invoked.",
+                "Counters and phases reflect the last published snapshot; this observation never refreshes it.",
+                "The native observation package still uses a temporary hook and a resident allocation.",
+            ],
         }
     digest = sha(json.dumps(meta, sort_keys=True, separators=(",", ":")).encode())
     meta["packageSha256"] = digest
     constants = {
         "ND_CC_AUTODETECT_IDENTITY": "1" if args.auto_detect else "0",
-        "ND_CC_PACKAGE_SCHEMA": "1", "ND_CC_EXPECTED_FIRMWARE": "UINT32_C(0x13200006)",
-        "ND_CC_EXPECTED_PID": str(identity["pid"]), "ND_CC_PACKAGE_ID": json.dumps(args.package_id),
+        "ND_CC_CONFIGURE_HTTP_AUDIO": "1" if configure_http_audio else "0",
+        "ND_CC_PACKAGE_SCHEMA": "1",
+        "ND_CC_EXPECTED_FIRMWARE": "UINT32_C(0x13200006)",
+        "ND_CC_EXPECTED_PID": str(identity["pid"]),
+        "ND_CC_PACKAGE_ID": json.dumps(args.package_id),
         "ND_CC_PACKAGE_OPERATION": json.dumps(args.operation),
-        "ND_CC_PACKAGE_SHA256": json.dumps(digest), "ND_CC_STUB_SHA256": json.dumps(sha(code)),
-        "ND_CC_HBC_SHA256": json.dumps(sha(hbc_data)), "ND_CC_CPP_BARRIER_READY": "1" if barrier else "0",
+        "ND_CC_PACKAGE_SHA256": json.dumps(digest),
+        "ND_CC_STUB_SHA256": json.dumps(sha(code)),
+        "ND_CC_HBC_SHA256": json.dumps(sha(hbc_data)),
+        "ND_CC_CPP_BARRIER_READY": "1" if barrier else "0",
         "ND_CC_STUB_CODE_BYTES": str(len(code)),
         "ND_CC_EXPECTED_EXECUTOR": "UINT64_C(0x%x)" % identity["executor"],
         "ND_CC_EXPECTED_RUNTIME": "UINT64_C(0x%x)" % identity["runtime"],
@@ -706,7 +935,21 @@ try { Object.defineProperty(globalThis, '__navidromeLocalMusicControl', {value: 
         bytecode.chmod(0o600)
         (out / "cc-install-payload.h").chmod(0o600)
     (out / "cc-install-package.json").write_text(json.dumps(meta, indent=2) + "\n")
-    print(json.dumps({k: meta[k] for k in ("packageId", "hbcBytes", "stubCodeBytes", "packageSha256", "status")}, indent=2))
+    print(
+        json.dumps(
+            {
+                k: meta[k]
+                for k in (
+                    "packageId",
+                    "hbcBytes",
+                    "stubCodeBytes",
+                    "packageSha256",
+                    "status",
+                )
+            },
+            indent=2,
+        )
+    )
 
 
 if __name__ == "__main__":

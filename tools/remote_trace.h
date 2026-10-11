@@ -6,7 +6,7 @@
 #include <stdio.h>
 #include <sys/types.h>
 struct nd_trace;
-#define ND_TRACE_MAX_INITIALIZED_MAPPING (10U * 16384U)
+#define ND_TRACE_MAX_INITIALIZED_MAPPING (12U * 16384U)
 struct nd_trace *nd_trace_begin(pid_t expected_pid);
 int nd_trace_ready(const struct nd_trace *t);
 int nd_trace_map(struct nd_trace *t, size_t size, uint64_t *address);

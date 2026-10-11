@@ -1,82 +1,83 @@
 # NaviStation5
 
-Experimental open-source PS5 homebrew for listening to a **Navidrome** library
-through the Control Center Music card, including while a game is open.
+Play a Navidrome library from the PS5 Control Center Music card, including while
+playing a game. NaviStation5 runs in Control Center and needs no foreground app
+or separate audio server.
 
-The current route runs the UI and audio controls in the resident Control Center
-runtime. It does not require a separate installed audio application, an auxiliary
-HTTP service, or keeping a foreground homebrew app open.
+Supports **PS5 firmware 13.20**. Other firmware is rejected.
 
-## Current support
+- Browse albums and playlists by cover, with continuous album scrolling.
+- Play collections in order or shuffle them; the queue continues with Music closed.
+- Control playback and view progress from the card.
+- Receive a silent notification when each song starts.
+- Keep your Navidrome login across console restarts.
+- Use Spanish, English, French, German, Italian or Portuguese automatically,
+  following the console language. Unsupported languages fall back to Spanish.
 
-- PS5 firmware **13.20**, exact profile `0x13200006`.
-- Music-card interface: login, albums, tracks, cover art, playback and progress.
-- Resident audio: play, pause, resume, stop and track changes.
-- One ELF discovers the current ShellUI/Control Center identity automatically.
-- Repeated loading preserves an intact existing card and its audio state.
-
-Audio and track controls were verified in Home and Rayman on the development
-console. Automatic discovery and loading the same ELF twice were verified in an
-initialized session. **Loading after a fresh console reboot has not yet been
-verified.** Other firmware is unsupported and rejected by the guards.
+L1 opens Albums and R1 opens Playlists. Albums with one song play directly.
+Selecting an individual song plays that song; **Play** and **Shuffle** start the
+whole collection. Navidrome supplies the song, artist and album names.
 
 ## Build
 
-Requirements: Node.js 20+, Python 3, Make, a configured
-[ps5-payload-sdk](https://github.com/ps5-payload-dev/sdk), and
+Requires Node.js 20+, Python 3, Make,
+[ps5-payload-sdk](https://github.com/ps5-payload-dev/sdk), LLVM 18 and
 [Hermes 0.12.0](https://github.com/facebook/hermes/releases/tag/v0.12.0)
-with bytecode version 89. The reviewed native stub must reproduce the recorded
-binary fingerprint; changing the compiler or stub requires a new static review.
+with HBC version 89.
 
 ```sh
 npm ci
 cp config.example.json config.local.json
-# Edit serverUrl in config.local.json to point to your Navidrome server.
+# Set serverUrl in config.local.json.
 export PS5_PAYLOAD_SDK=/path/to/ps5-payload-sdk
-export HERMESC=/path/to/hermesc
-# Configure LLVM as required by your SDK, e.g. the reviewed LLVM 18 toolchain:
 export LLVM_CONFIG=/path/to/llvm-18/bin/llvm-config
+export HERMESC=/path/to/hermesc
 npm test
 npm run build
 ```
 
-Output: `build/navistation5.elf`. The build generates a private control token and
-embeds the configured server origin. Username and password are entered in the
-console interface; they are not source defaults or build settings. Server URLs
-must be HTTP(S) origins without credentials, paths, query strings or fragments.
-All networking and stream validation use that same configured origin.
+Output: `build/navistation5.elf`. The build embeds the server origin and generates
+a local control token. `serverUrl` accepts HTTP(S) origins without credentials,
+paths or query strings. Local configuration and generated files are ignored by Git.
 
-The build has no deployment step and never connects to a console. No Sony
-libraries, console dumps, music, credentials or preconfigured ELF are distributed.
+Enter your Navidrome username and password on the console. A successful login
+saves a reusable access token on the PS5; **Sign out** removes it. The password
+is not saved. The token has no refresh cycle: it remains usable while the server
+accepts it. The saved token is not encrypted.
 
-## Load on the console
+The native bootstrap must match its reviewed fingerprint. A different compiler
+or bootstrap changes require a new review; see [Contributing](CONTRIBUTING.md).
 
-1. Activate your jailbreak and ELF loader.
-2. Open Control Center and Music once to initialize its normal runtime.
-3. Send `build/navistation5.elf` using your loader (typically TCP port 9021).
-4. Reopen Music and sign in to Navidrome.
+## Load
 
-This integration lives in memory. Repeat the load after restarting the console;
-the same ELF can be reused without capturing session addresses or recompiling.
-Automatic discovery does not activate the jailbreak or install a boot service.
-A repeat load preserves an existing working card, so it does not upgrade that
-card to a new bundled UI. For now, load once per boot.
+1. Activate the jailbreak and ELF loader.
+2. Open Control Center → Music once.
+3. Send `build/navistation5.elf` through the loader, usually on TCP port 9021.
+4. Reopen Music and sign in.
 
-The retired native “Prueba de audio Navidrome” app is unnecessary. Do not install
-it or place its old folder in a homebrew auto-registration directory.
+Load once per boot. The ELF discovers the current ShellUI session and can be
+reused after a restart. A repeat load preserves a working card; it does not
+replace that card with a newer build. Restart the console before loading an
+updated build. No companion audio app is needed.
 
-## Source layout
+## Validation
 
-- `ui/`: Music-card interface, OpenSubsonic client and resident audio transport.
-- `tools/`: native installer, session/firmware guards and build tooling.
-- `tools/profiles/`: inspection metadata for this project's native bootstrap stub.
+Hardware checks on the development console covered playback in Home and Rayman,
+card controls, login restoration after reboot, automatic ShellUI discovery,
+controller navigation, shuffle and advancement to the next album song with Music
+closed. The console language was detected as `es-ES`; automated tests cover all
+six UI languages and regional variants.
 
-See [architecture](docs/ARCHITECTURE.md), [contributing](CONTRIBUTING.md) and
-[third-party notices](NOTICE.md). This repository contains the current resident
-route; private console captures and retired native-player experiments remain
-outside the public project.
+The development console's HDMI capture setup has also produced silent audio
+after reboot without NaviStation5 running. The shutdown drain does not resolve
+that capture issue.
+
+`npm test` covers playback ownership, queues, notifications, credentials,
+controller navigation, translations and installer guards. See
+[Architecture](docs/ARCHITECTURE.md) for runtime behavior.
 
 ## License
 
-GPL-3.0-or-later. Independent homebrew; not affiliated with Sony, PlayStation or
-the Navidrome project.
+GPL-3.0-or-later; see [LICENSE](LICENSE) and [Notices](NOTICE.md).
+Sony binaries, console dumps and music are not included. This project is not
+affiliated with Sony or Navidrome.

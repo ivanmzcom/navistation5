@@ -1,5 +1,6 @@
-/* Copied core from remote_syscall_probe.c SHA256 4fcb71ae14c38e638c794706656eb2ea9913e345b7ff83ffdb59be3dedc58604.
- * Baseline preserved unchanged. Private to remote_trace.c; no entry point. */
+/* Copied core from remote_syscall_probe.c SHA256
+ * 4fcb71ae14c38e638c794706656eb2ea9913e345b7ff83ffdb59be3dedc58604. Baseline preserved unchanged.
+ * Private to remote_trace.c; no entry point. */
 /* SPDX-License-Identifier: GPL-3.0-or-later
  * Independent stage 2: verified getpid syscall gate, getpid, temporary RW
  * mmap/munmap. No target memory writes, injected code, RET, or executable map.
@@ -45,8 +46,8 @@ struct raw_result {
 };
 _Static_assert(sizeof(struct raw_result) == 16, "raw syscall return size");
 _Static_assert(offsetof(struct raw_result, carry) == 8, "raw syscall return ABI");
-extern struct raw_result nd_raw_syscall4(uint64_t number, uint64_t a0,
-                                       uint64_t a1, uint64_t a2, uint64_t a3);
+extern struct raw_result nd_raw_syscall4(uint64_t number, uint64_t a0, uint64_t a1, uint64_t a2,
+                                         uint64_t a3);
 
 struct syscall_result {
     int attempted;
@@ -72,8 +73,7 @@ int __wrap___patch_init(void) { return 0; }
 
 static int saved_error(void) { return errno ? errno : EIO; }
 
-static void credential_restore(struct credential_scope *scope)
-{
+static void credential_restore(struct credential_scope *scope) {
     if (!scope->saved)
         return;
     /* All restoration operations are attempted despite earlier failures. */
@@ -114,8 +114,7 @@ static void credential_restore(struct credential_scope *scope)
                       !scope->verify_attrs_error && !scope->verify_auth_error;
 }
 
-static int credential_setup(struct credential_scope *scope)
-{
+static int credential_setup(struct credential_scope *scope) {
     scope->self = getpid();
     errno = 0;
     scope->saved_authid = kernel_get_ucred_authid(scope->self);
@@ -159,11 +158,10 @@ static int credential_setup(struct credential_scope *scope)
     return 0;
 }
 
-static pid_t find_shellui(size_t *returned_bytes, size_t *records_parsed)
-{
+static pid_t find_shellui(size_t *returned_bytes, size_t *records_parsed) {
     int mib[4] = {CTL_KERN, KERN_PROC, KERN_PROC_PROC, 0};
-    const size_t minimum = offsetof(struct kinfo_proc, ki_comm) +
-                           sizeof(((struct kinfo_proc *)0)->ki_comm);
+    const size_t minimum =
+        offsetof(struct kinfo_proc, ki_comm) + sizeof(((struct kinfo_proc *)0)->ki_comm);
     for (unsigned int attempt = 0; attempt < 3; ++attempt) {
         size_t needed = 0;
         if (sysctl(mib, 4, NULL, &needed, NULL, 0) != 0)
@@ -236,22 +234,20 @@ static pid_t find_shellui(size_t *returned_bytes, size_t *records_parsed)
     return -1;
 }
 
-static struct syscall_result capture_call(uint64_t number, uint64_t a0,
-                                          uint64_t a1, uint64_t a2, uint64_t a3)
-{
+static struct syscall_result capture_call(uint64_t number, uint64_t a0, uint64_t a1, uint64_t a2,
+                                          uint64_t a3) {
     struct syscall_result result = {0};
     result.attempted = 1;
     errno = 0;
     result.raw = nd_raw_syscall4(number, a0, a1, a2, a3);
     result.local_error = errno;
     if (result.raw.carry != 0)
-        result.kernel_error = result.raw.rax > 0 && result.raw.rax <= INT_MAX
-                                  ? (int)result.raw.rax : -1;
+        result.kernel_error =
+            result.raw.rax > 0 && result.raw.rax <= INT_MAX ? (int)result.raw.rax : -1;
     return result;
 }
 
-static int monotonic_ns(uint64_t *result)
-{
+static int monotonic_ns(uint64_t *result) {
     struct timespec ts;
     errno = 0;
     if (clock_gettime(CLOCK_MONOTONIC, &ts) != 0)
@@ -265,16 +261,18 @@ static int monotonic_ns(uint64_t *result)
     return 0;
 }
 
-static void write_call(FILE *file, const struct syscall_result *call)
-{
-    fprintf(file, "{\"attempted\":%s,\"rax\":\"0x%016" PRIx64
-                  "\",\"signedRax\":%" PRId64 ",\"carry\":%" PRIu64
-                  ",\"kernelError\":%d,\"localErrno\":%d}",
-            call->attempted ? "true" : "false", (uint64_t)call->raw.rax,
-            call->raw.rax, call->raw.carry, call->kernel_error, call->local_error);
+static void write_call(FILE *file, const struct syscall_result *call) {
+    fprintf(file,
+            "{\"attempted\":%s,\"rax\":\"0x%016" PRIx64 "\",\"signedRax\":%" PRId64
+            ",\"carry\":%" PRIu64 ",\"kernelError\":%d,\"localErrno\":%d}",
+            call->attempted ? "true" : "false", (uint64_t)call->raw.rax, call->raw.rax,
+            call->raw.carry, call->kernel_error, call->local_error);
 }
 
-struct wait_event { struct syscall_result call; int status; };
+struct wait_event {
+    struct syscall_result call;
+    int status;
+};
 struct stop_wait {
     struct wait_event events[MAX_WAIT_EVENTS];
     size_t count;
@@ -328,20 +326,16 @@ struct report {
     const char *failure;
 };
 
-static int call_ok(const struct syscall_result *call)
-{
+static int call_ok(const struct syscall_result *call) {
     return call->attempted && call->raw.carry == 0 && call->raw.rax == 0;
 }
 
-static struct syscall_result trace_call(int request, pid_t target,
-                                         void *address, uint64_t data)
-{
+static struct syscall_result trace_call(int request, pid_t target, void *address, uint64_t data) {
     return capture_call(SYS_ptrace, (uint64_t)request, (uint64_t)target,
                         (uint64_t)(uintptr_t)address, data);
 }
 
-static void wait_for_stop(pid_t pid, struct stop_wait *wait, uint64_t started)
-{
+static void wait_for_stop(pid_t pid, struct stop_wait *wait, uint64_t started) {
     for (;;) {
         uint64_t now;
         if (monotonic_ns(&now) != 0 || now < started) {
@@ -358,8 +352,8 @@ static void wait_for_stop(pid_t pid, struct stop_wait *wait, uint64_t started)
             return;
         }
         struct wait_event *event = &wait->events[wait->count++];
-        event->call = capture_call(SYS_wait4, (uint64_t)pid,
-            (uint64_t)(uintptr_t)&event->status, WNOHANG | WUNTRACED, 0);
+        event->call = capture_call(SYS_wait4, (uint64_t)pid, (uint64_t)(uintptr_t)&event->status,
+                                   WNOHANG | WUNTRACED, 0);
         if (event->call.raw.carry) {
             if (event->call.kernel_error != EINTR) {
                 wait->error = event->call.kernel_error;
@@ -389,24 +383,43 @@ static void wait_for_stop(pid_t pid, struct stop_wait *wait, uint64_t started)
 
 /* Trap number/error are kernel trap-frame metadata, not writable user state.
  * Compare every architectural field explicitly; do not compare padding. */
-static int same_registers(const struct reg *a, const struct reg *b)
-{
-#define SAME(field) if (a->field != b->field) return 0
-    SAME(r_r15); SAME(r_r14); SAME(r_r13); SAME(r_r12); SAME(r_r11);
-    SAME(r_r10); SAME(r_r9); SAME(r_r8); SAME(r_rdi); SAME(r_rsi);
-    SAME(r_rbp); SAME(r_rbx); SAME(r_rdx); SAME(r_rcx); SAME(r_rax);
-    SAME(r_fs); SAME(r_gs); SAME(r_es); SAME(r_ds); SAME(r_rip);
-    SAME(r_cs); SAME(r_rflags); SAME(r_rsp); SAME(r_ss);
+static int same_registers(const struct reg *a, const struct reg *b) {
+#define SAME(field)                                                                                \
+    if (a->field != b->field)                                                                      \
+    return 0
+    SAME(r_r15);
+    SAME(r_r14);
+    SAME(r_r13);
+    SAME(r_r12);
+    SAME(r_r11);
+    SAME(r_r10);
+    SAME(r_r9);
+    SAME(r_r8);
+    SAME(r_rdi);
+    SAME(r_rsi);
+    SAME(r_rbp);
+    SAME(r_rbx);
+    SAME(r_rdx);
+    SAME(r_rcx);
+    SAME(r_rax);
+    SAME(r_fs);
+    SAME(r_gs);
+    SAME(r_es);
+    SAME(r_ds);
+    SAME(r_rip);
+    SAME(r_cs);
+    SAME(r_rflags);
+    SAME(r_rsp);
+    SAME(r_ss);
 #undef SAME
     return 1;
 }
 
-static int restore_registers(struct report *report)
-{
+static int restore_registers(struct report *report) {
     if (!report->regs_dirty)
         return 1;
     if (!report->regs_saved || !report->target_stopped ||
-        report->restore_count == sizeof(report->restores)/sizeof(report->restores[0]))
+        report->restore_count == sizeof(report->restores) / sizeof(report->restores[0]))
         return 0;
     struct restore_attempt *attempt = &report->restores[report->restore_count++];
     attempt->set = trace_call(PT_SETREGS, report->lwp, &report->original, 0);
@@ -426,8 +439,7 @@ static int restore_registers(struct report *report)
     return 0;
 }
 
-static void note_stop(struct report *report, const struct stop_wait *wait)
-{
+static void note_stop(struct report *report, const struct stop_wait *wait) {
     report->target_stopped = wait->stopped;
     if (wait->exited)
         report->target_exited = 1;
@@ -436,30 +448,30 @@ static void note_stop(struct report *report, const struct stop_wait *wait)
         report->detach_signal = wait->signal;
 }
 
-static void inspect_step_result(struct report *report, struct remote_call *call)
-{
+static void inspect_step_result(struct report *report, struct remote_call *call) {
     struct ptrace_lwpinfo info = {0};
     call->lwp = trace_call(PT_LWPINFO, report->target, &info, sizeof(info));
-    if (!call_ok(&call->lwp)) return;
+    if (!call_ok(&call->lwp))
+        return;
     call->stopped_lwp = info.pl_lwpid;
-    if (call->stopped_lwp != report->lwp) return;
+    if (call->stopped_lwp != report->lwp)
+        return;
     struct reg result = {0};
     call->get = trace_call(PT_GETREGS, report->lwp, &result, 0);
-    if (!call_ok(&call->get)) return;
+    if (!call_ok(&call->get))
+        return;
     call->remote_rax = (uint64_t)result.r_rax;
     call->remote_rip = (uint64_t)result.r_rip;
     call->remote_flags = (uint64_t)result.r_rflags;
     call->remote_carry = !!(result.r_rflags & 1);
     if (call->remote_carry)
-        call->remote_error = result.r_rax > 0 && result.r_rax <= INT_MAX
-                                 ? (int)result.r_rax : -1;
+        call->remote_error = result.r_rax > 0 && result.r_rax <= INT_MAX ? (int)result.r_rax : -1;
     call->result_valid = (uint64_t)result.r_rip == (uint64_t)report->entry + 0xc;
     if (call->result_valid && report->detach_signal == SIGTRAP)
         report->detach_signal = 0;
 }
 
-static int recover_stop(struct report *report)
-{
+static int recover_stop(struct report *report) {
     if (report->target_stopped)
         return 1;
     if (report->recovery_attempted || report->target_exited)
@@ -476,8 +488,7 @@ static int recover_stop(struct report *report)
         report->recovery_wait.error = saved_error();
         return 0;
     }
-    report->recovery_signal = capture_call(SYS_kill, (uint64_t)report->target,
-                                           SIGSTOP, 0, 0);
+    report->recovery_signal = capture_call(SYS_kill, (uint64_t)report->target, SIGSTOP, 0, 0);
     /* A pending trace stop can be recovered even if sending SIGSTOP fails. */
     wait_for_stop(report->target, &report->recovery_wait, started);
     note_stop(report, &report->recovery_wait);
@@ -485,10 +496,8 @@ static int recover_stop(struct report *report)
     return report->recovery_ok;
 }
 
-static int execute_remote(struct report *report, struct remote_call *call)
-{
-    if (!report->target_stopped || !report->gate_valid || !report->regs_saved ||
-        report->regs_dirty)
+static int execute_remote(struct report *report, struct remote_call *call) {
+    if (!report->target_stopped || !report->gate_valid || !report->regs_saved || report->regs_dirty)
         return 0;
     uint64_t started;
     if (monotonic_ns(&started) != 0) {
@@ -550,43 +559,49 @@ restore:
            call->wait.signal == SIGTRAP;
 }
 
-static int valid_mapping(uint64_t address)
-{
+static int valid_mapping(uint64_t address) {
     return address >= MAP_BYTES && address <= USER_END - MAP_BYTES &&
            (address & (MAP_BYTES - 1)) == 0;
 }
 
-static void write_wait(FILE *file, const struct stop_wait *wait)
-{
-    fprintf(file, "{\"deadlineMs\":1000,\"pollMs\":5,\"elapsedNs\":%" PRIu64
-        ",\"stopped\":%s,\"signal\":%d,\"timeout\":%s,\"error\":%d,"
-        "\"exited\":%s,\"unexpected\":%s,\"events\":[", wait->elapsed_ns,
-        wait->stopped?"true":"false", wait->signal, wait->timed_out?"true":"false",
-        wait->error, wait->exited?"true":"false", wait->unexpected?"true":"false");
+static void write_wait(FILE *file, const struct stop_wait *wait) {
+    fprintf(file,
+            "{\"deadlineMs\":1000,\"pollMs\":5,\"elapsedNs\":%" PRIu64
+            ",\"stopped\":%s,\"signal\":%d,\"timeout\":%s,\"error\":%d,"
+            "\"exited\":%s,\"unexpected\":%s,\"events\":[",
+            wait->elapsed_ns, wait->stopped ? "true" : "false", wait->signal,
+            wait->timed_out ? "true" : "false", wait->error, wait->exited ? "true" : "false",
+            wait->unexpected ? "true" : "false");
     for (size_t i = 0; i < wait->count; ++i) {
-        fprintf(file, "%s{\"status\":%d,\"call\":", i?",":"", wait->events[i].status);
+        fprintf(file, "%s{\"status\":%d,\"call\":", i ? "," : "", wait->events[i].status);
         write_call(file, &wait->events[i].call);
         fputc('}', file);
     }
     fputs("]}", file);
 }
 
-static void write_remote(FILE *file, const struct remote_call *call)
-{
-    fprintf(file, "{\"name\":\"%s\",\"number\":%" PRIu64 ",\"attempted\":%s,\"args\":[",
-        call->name, call->number, call->attempted?"true":"false");
-    for (unsigned i=0; i<6; ++i)
-        fprintf(file, "%s\"0x%016" PRIx64 "\"", i?",":"", call->args[i]);
-    fputs("],\"setRegisters\":", file); write_call(file, &call->set);
-    fputs(",\"verifySetRegisters\":", file); write_call(file, &call->verify_set);
-    fprintf(file, ",\"preparedRegistersMatch\":%s", call->prepared_matches?"true":"false");
-    fputs(",\"step\":", file); write_call(file, &call->step);
-    fputs(",\"wait\":", file); write_wait(file, &call->wait);
-    fputs(",\"lwpInfo\":", file); write_call(file, &call->lwp);
-    fputs(",\"getRegisters\":", file); write_call(file, &call->get);
-    fprintf(file, ",\"stoppedLwp\":%d,\"resultValid\":%s,\"remoteRax\":\"0x%016" PRIx64
-        "\",\"remoteRip\":\"0x%016" PRIx64 "\",\"remoteRflags\":\"0x%016" PRIx64
-        "\",\"remoteCarry\":%d,\"remoteKernelError\":%d}", (int)call->stopped_lwp,
-        call->result_valid?"true":"false", call->remote_rax, call->remote_rip,
-        call->remote_flags, call->remote_carry, call->remote_error);
+static void write_remote(FILE *file, const struct remote_call *call) {
+    fprintf(file, "{\"name\":\"%s\",\"number\":%" PRIu64 ",\"attempted\":%s,\"args\":[", call->name,
+            call->number, call->attempted ? "true" : "false");
+    for (unsigned i = 0; i < 6; ++i)
+        fprintf(file, "%s\"0x%016" PRIx64 "\"", i ? "," : "", call->args[i]);
+    fputs("],\"setRegisters\":", file);
+    write_call(file, &call->set);
+    fputs(",\"verifySetRegisters\":", file);
+    write_call(file, &call->verify_set);
+    fprintf(file, ",\"preparedRegistersMatch\":%s", call->prepared_matches ? "true" : "false");
+    fputs(",\"step\":", file);
+    write_call(file, &call->step);
+    fputs(",\"wait\":", file);
+    write_wait(file, &call->wait);
+    fputs(",\"lwpInfo\":", file);
+    write_call(file, &call->lwp);
+    fputs(",\"getRegisters\":", file);
+    write_call(file, &call->get);
+    fprintf(file,
+            ",\"stoppedLwp\":%d,\"resultValid\":%s,\"remoteRax\":\"0x%016" PRIx64
+            "\",\"remoteRip\":\"0x%016" PRIx64 "\",\"remoteRflags\":\"0x%016" PRIx64
+            "\",\"remoteCarry\":%d,\"remoteKernelError\":%d}",
+            (int)call->stopped_lwp, call->result_valid ? "true" : "false", call->remote_rax,
+            call->remote_rip, call->remote_flags, call->remote_carry, call->remote_error);
 }
