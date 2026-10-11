@@ -22,13 +22,20 @@ whole collection. Navidrome supplies the song, artist and album names.
 
 ## Screenshots
 
+**Album library** — browse cover artwork from the PS5 Music card.
+
 ![NaviStation5 album library in the PS5 Music card](docs/images/albums.jpg)
 
-| Album details                                                       | Playback controls                                                    |
-| ------------------------------------------------------------------- | -------------------------------------------------------------------- |
-| ![Album tracks with Play and Shuffle](docs/images/album-detail.jpg) | ![Paused playback with the Resume control](docs/images/playback.jpg) |
+**Album details** — tracks, durations, Play and Shuffle.
 
-Captured on a PS5 running firmware 13.20.
+![Album tracks with Play and Shuffle](docs/images/album-detail.jpg)
+
+**Playback** — progress and native controller shortcuts.
+
+![Playing a song with Square to pause and Triangle to stop](docs/images/playback.jpg)
+
+Captured directly from a PS5 running firmware 13.20, with the Music card open
+over Home.
 
 ## Build
 
