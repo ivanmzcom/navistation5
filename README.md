@@ -77,9 +77,13 @@ or bootstrap changes require a new review; see [Contributing](CONTRIBUTING.md).
 ## Load
 
 1. Activate the jailbreak and ELF loader.
-2. Open Control Center → Music once.
-3. Send `build/navistation5.elf` through the loader, usually on TCP port 9021.
-4. Reopen Music and sign in.
+2. Send `navistation5.elf` through the loader, usually on TCP port 9021.
+3. Open Control Center → Music and sign in. If Music was already open when you
+   loaded the ELF, close and reopen it.
+
+The installer needs the Control Center runtime to be available. If installation
+fails because that runtime is not initialized, open Control Center and load the
+ELF again. Opening Music before loading is not a requirement.
 
 Load once per boot. The ELF discovers the current ShellUI session and can be
 reused after a restart. A repeat load preserves a working card; it does not
