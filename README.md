@@ -12,11 +12,23 @@ Supports **PS5 firmware 13.20**. Other firmware is rejected.
 - Receive a silent notification when each song starts.
 - Keep your Navidrome login across console restarts.
 - Use Spanish, English, French, German, Italian or Portuguese automatically,
-  following the console language. Unsupported languages fall back to Spanish.
+  following the console language. Unsupported languages fall back to English.
 
-L1 opens Albums and R1 opens Playlists. Albums with one song play directly.
+L1 opens Albums and R1 opens Playlists. Square pauses or resumes when the player
+is visible; Triangle stops playback and R2 opens Account. Albums with one song
+play directly.
 Selecting an individual song plays that song; **Play** and **Shuffle** start the
 whole collection. Navidrome supplies the song, artist and album names.
+
+## Screenshots
+
+![NaviStation5 album library in the PS5 Music card](docs/images/albums.jpg)
+
+| Album details                                                       | Playback controls                                                    |
+| ------------------------------------------------------------------- | -------------------------------------------------------------------- |
+| ![Album tracks with Play and Shuffle](docs/images/album-detail.jpg) | ![Paused playback with the Resume control](docs/images/playback.jpg) |
+
+Captured on a PS5 running firmware 13.20.
 
 ## Build
 

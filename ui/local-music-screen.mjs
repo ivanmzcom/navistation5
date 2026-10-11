@@ -16,7 +16,7 @@ const styles = {
   row: { flexDirection: "row", alignItems: "center" },
   header: { flexDirection: "row", alignItems: "center", marginBottom: 16 },
   brand: { color: "#ffffff", flex: 1 },
-  accountButton: { width: 180, height: 40 },
+  accountButton: { width: 220, height: 40 },
   title: { color: "#ffffff", marginBottom: 4 },
   note: { color: "#a7a7a7" },
   hero: { flexDirection: "row", alignItems: "center", marginBottom: 16 },
@@ -84,7 +84,7 @@ const styles = {
     marginTop: 12,
   },
   playerCopy: { flex: 1, marginLeft: 14, marginRight: 16 },
-  playerButton: { width: 180, height: 44, marginLeft: 8 },
+  playerButton: { width: 240, height: 44, marginLeft: 8 },
   progress: { height: 3, backgroundColor: "#505050", marginTop: 12 },
   progressFill: { height: 3, backgroundColor: "#ffffff" },
   time: { color: "#a7a7a7", marginTop: 6 },
@@ -208,6 +208,67 @@ export function createLocalMusicScreen({ React, native } = {}) {
     constructor(props) {
       super(props);
       this.t = createTranslator(props.locale);
+      this._togglePlayback = () => {
+        const playback = this.state.playback;
+        if (
+          !this._alive ||
+          !this.state.connected ||
+          !this.props.audio ||
+          !playback?.available ||
+          !["playing", "paused"].includes(playback.phase)
+        )
+          return false;
+        if (
+          this._togglePending ||
+          Date.now() - (this._lastToggle || 0) < 300 ||
+          playback.pending ||
+          playback.stopPending ||
+          controlUnavailable(playback) ||
+          playback.controlsAvailable === false
+        )
+          return true;
+        this._lastToggle = Date.now();
+        this._togglePending = true;
+        this.audioControl(
+          playback.phase === "paused" ? "resume" : "pause",
+        ).finally(() => {
+          this._togglePending = false;
+        });
+        return true;
+      };
+      this._openAccount = () => {
+        if (!this._alive || !this.state.connected) return false;
+        if (!this._busy && !this.state.accountOpen)
+          this.setState({ accountOpen: true });
+        return true;
+      };
+      this._stopPlayback = () => {
+        const playback = this.state.playback;
+        if (
+          !this._alive ||
+          !this.state.connected ||
+          !this.props.audio ||
+          !playback?.available ||
+          (playback.phase === "idle" &&
+            !playback.pending &&
+            !playback.stopPending)
+        )
+          return false;
+        if (
+          this._stopPending ||
+          Date.now() - (this._lastStop || 0) < 300 ||
+          playback.stopPending ||
+          controlUnavailable(playback) ||
+          playback.controlsAvailable === false
+        )
+          return true;
+        this._lastStop = Date.now();
+        this._stopPending = true;
+        this.audioControl("stopPlayback").finally(() => {
+          this._stopPending = false;
+        });
+        return true;
+      };
       this.catalogRow = (item, index) => row(item, index, this.t("untitled"));
       this._connection = { client: props.client, library: props.library };
       const previous = playingByAudio.get(props.audio);
@@ -846,6 +907,7 @@ export function createLocalMusicScreen({ React, native } = {}) {
       }
       try {
         await audio[command]();
+        if (this._alive) this.setState({ error: "" });
       } catch (error) {
         if (this._alive)
           this.setState({
@@ -900,7 +962,18 @@ export function createLocalMusicScreen({ React, native } = {}) {
         ref: this.coverRef(key),
         title,
         style,
+        shortcutKeyGuide:
+          key === "albums"
+            ? "l1"
+            : key === "playlists"
+              ? "r1"
+              : key === "account"
+                ? "r2"
+                : undefined,
         disabled: this.state.busy || disabled,
+        onSquareKeyDown: this._togglePlayback,
+        onTriangleKeyDown: this._stopPlayback,
+        onR2KeyDown: this._openAccount,
         onLKeyDown: () => this.switchTab("albums"),
         onRKeyDown: () => this.switchTab("playlists"),
         onDownKeyDown: ["album-play", "album-shuffle"].includes(key)
@@ -963,11 +1036,24 @@ export function createLocalMusicScreen({ React, native } = {}) {
           ref: this.coverRef(key),
           title,
           style: styles.playerButton,
+          shortcutKeyGuide:
+            key === "audio-pause"
+              ? "square"
+              : key === "audio-stop"
+                ? "triangle"
+                : undefined,
           disabled,
+          onSquareKeyDown: this._togglePlayback,
+          onTriangleKeyDown: this._stopPlayback,
+          onR2KeyDown: this._openAccount,
           onLKeyDown: () => this.switchTab("albums"),
           onRKeyDown: () => this.switchTab("playlists"),
           onPress: () => {
-            if (this._alive && !disabled) this.audioControl(command);
+            if (this._alive && !disabled) {
+              if (key === "audio-pause") this._togglePlayback();
+              else if (key === "audio-stop") this._stopPlayback();
+              else this.audioControl(command);
+            }
           },
         });
       return h(
@@ -1169,6 +1255,9 @@ export function createLocalMusicScreen({ React, native } = {}) {
             onFocus: () => this.focusTrack(item),
             onUpKeyDown: () => this.moveTrack(-1, item.index),
             onDownKeyDown: () => this.moveTrack(1, item.index),
+            onSquareKeyDown: this._togglePlayback,
+            onTriangleKeyDown: this._stopPlayback,
+            onR2KeyDown: this._openAccount,
             onLKeyDown: () => this.switchTab("albums"),
             onRKeyDown: () => this.switchTab("playlists"),
             onPress: enabled
@@ -1269,6 +1358,9 @@ export function createLocalMusicScreen({ React, native } = {}) {
             ref: this.coverRef(key),
             style: styles.coverButton,
             disabled: this.state.busy,
+            onSquareKeyDown: this._togglePlayback,
+            onTriangleKeyDown: this._stopPlayback,
+            onR2KeyDown: this._openAccount,
             onLKeyDown: () => this.switchTab("albums"),
             onRKeyDown: () => this.switchTab("playlists"),
             onUpKeyDown: () => this.moveCollection(-1, item.index),
@@ -1444,6 +1536,9 @@ export function createLocalMusicScreen({ React, native } = {}) {
         FocusLayerPS,
         {
           style: styles.screen,
+          onSquareKeyDown: this._togglePlayback,
+          onTriangleKeyDown: this._stopPlayback,
+          onR2KeyDown: this._openAccount,
           onLKeyDown: () => this.switchTab("albums"),
           onRKeyDown: () => this.switchTab("playlists"),
         },
@@ -1455,7 +1550,7 @@ export function createLocalMusicScreen({ React, native } = {}) {
             ? this.button(
                 "account",
                 this.t("account"),
-                () => this.setState({ accountOpen: true }),
+                this._openAccount,
                 false,
                 styles.accountButton,
               )

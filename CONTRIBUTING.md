@@ -4,8 +4,10 @@ Run `npm run format:check`, `npm test` and build with the supported SDK/Hermes
 toolchain. For runtime
 changes, report what you checked on a console and what remains untested.
 
-Keep credentials, tokens, signed stream URLs, console captures and copyrighted
-binaries out of commits. Use `config.local.json` for your server.
+Keep credentials, tokens, signed stream URLs, diagnostic console captures and
+copyrighted binaries out of commits. Use `config.local.json` for your server.
+Public UI screenshots belong in `docs/images`; check them for private data and
+describe third-party imagery in `NOTICE.md`.
 
 Preserve firmware, ownership and rollback checks. New firmware needs a verified
 ABI profile. Bootstrap changes need a source, assembly, CFI and LSDA review

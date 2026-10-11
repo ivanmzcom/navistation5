@@ -106,7 +106,7 @@ test("disconnect waits for deletion and reports failure without claiming the log
   await flush();
   await bad.disconnect();
   assert.equal(bad.state.connected, true);
-  assert.equal(bad.state.error, "No se pudo borrar la sesión guardada.");
+  assert.equal(bad.state.error, "Could not remove saved login.");
 });
 
 const albums = (offset, count) =>
@@ -264,7 +264,7 @@ test("single-song playback failure keeps the album grid and shows the retryable 
   await s.browse("albums");
   await s.openCollection(s.state.rows[0]);
   assert.equal(s.state.view, "albums");
-  assert.equal(s.state.error, "No se pudo reproducir");
+  assert.equal(s.state.error, "Could not play");
   assert.equal(s.state.busy, false);
 });
 test("closing while a single-song album loads cannot start playback", async () => {
@@ -536,4 +536,102 @@ test("shuffle creates a separate permutation and handles singleton collections",
   );
   assert.deepEqual(shuffleTracks([song(0)]), [song(0)]);
   assert.deepEqual(shuffleTracks([]), []);
+});
+
+test("Square pauses and resumes the visible player, ignoring repeated and unavailable commands", async () => {
+  const commands = [];
+  let finish;
+  const audio = {
+    status: () => ({ available: true, phase: "playing" }),
+    pause() {
+      commands.push("pause");
+      return new Promise((resolve) => {
+        finish = resolve;
+      });
+    },
+    async resume() {
+      commands.push("resume");
+    },
+  };
+  const s = new Screen({ ...connected, audio });
+  s._alive = true;
+  assert.equal(s._togglePlayback(), true);
+  assert.equal(s._togglePlayback(), true);
+  assert.deepEqual(commands, ["pause"]);
+  finish();
+  await flush();
+  s.state.playback = { available: true, phase: "paused" };
+  s._lastToggle = 0;
+  assert.equal(s._togglePlayback(), true);
+  await flush();
+  assert.deepEqual(commands, ["pause", "resume"]);
+  for (const patch of [
+    { pending: true },
+    { stopPending: true },
+    { controlsAvailable: false },
+    { errorCode: "ND_AUDIO_CONTROL_TIMEOUT" },
+  ]) {
+    s.state.playback = { available: true, phase: "playing", ...patch };
+    s._togglePlayback();
+  }
+  for (const phase of ["idle", "opening", "stopping", "error"]) {
+    s.state.playback = { available: true, phase };
+    assert.equal(s._togglePlayback(), false);
+  }
+  s.state.playback = { available: true, phase: "playing" };
+  s.state.connected = false;
+  assert.equal(s._togglePlayback(), false);
+  s.state.connected = true;
+  s._alive = false;
+  assert.equal(s._togglePlayback(), false);
+  assert.deepEqual(commands, ["pause", "resume"]);
+});
+
+test("R2 opens Account only for a mounted, connected and ready screen", () => {
+  const s = new Screen(connected);
+  assert.equal(s._openAccount(), false);
+  s._alive = true;
+  s._busy = true;
+  assert.equal(s._openAccount(), true);
+  assert.equal(s.state.accountOpen, false);
+  s._busy = false;
+  assert.equal(s._openAccount(), true);
+  assert.equal(s.state.accountOpen, true);
+  assert.equal(s._openAccount(), true);
+  assert.equal(s.state.accountOpen, true);
+  s.state.connected = false;
+  assert.equal(s._openAccount(), false);
+});
+
+test("Triangle stops a loading song once and ignores hidden or unavailable playback", async () => {
+  let finish;
+  let stops = 0;
+  const s = new Screen({
+    ...connected,
+    audio: {
+      status: () => ({ available: true, phase: "opening", pending: true }),
+      stopPlayback() {
+        stops++;
+        return new Promise((resolve) => {
+          finish = resolve;
+        });
+      },
+    },
+  });
+  s._alive = true;
+  assert.equal(s._stopPlayback(), true);
+  assert.equal(s._stopPlayback(), true);
+  assert.equal(stops, 1);
+  finish();
+  await flush();
+  s._lastStop = 0;
+  s.state.playback = {
+    available: true,
+    phase: "playing",
+    controlsAvailable: false,
+  };
+  assert.equal(s._stopPlayback(), true);
+  s.state.playback = { available: true, phase: "idle" };
+  assert.equal(s._stopPlayback(), false);
+  assert.equal(stops, 1);
 });

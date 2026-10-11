@@ -8,7 +8,7 @@ import {
 } from "./i18n.mjs";
 import { createLocalMusicScreen } from "./local-music-screen.mjs";
 
-test("regional console locales resolve to supported languages, with Spanish fallback", () => {
+test("regional console locales resolve to supported languages, with English fallback", () => {
   for (const [locale, language] of [
     ["es-ES", "es"],
     ["en-US", "en"],
@@ -31,8 +31,8 @@ test("regional console locales resolve to supported languages, with Spanish fall
     "__proto__",
     "constructor",
   ]) {
-    assert.equal(resolveLanguage(locale), "es");
-    assert.equal(createTranslator(locale)("play"), "Reproducir");
+    assert.equal(resolveLanguage(locale), "en");
+    assert.equal(createTranslator(locale)("play"), "Play");
   }
 });
 
@@ -185,7 +185,23 @@ test("localized screen renders login, album, playlist and errors without transla
       collection: { uri: "opaque-album", name: "Álbum sin traducir" },
       rows: s._items.map(s.catalogRow),
     };
+    s.props.audio = {};
+    s.state.playback = { available: true, phase: "paused" };
     const details = collect(s.render());
+    const resume = details.find((node) => node.props.name === "audio-pause");
+    assert.equal(resume.props.title, t("resume"));
+    assert.equal(resume.props.shortcutKeyGuide, "square");
+    for (const [name, shortcut] of [
+      ["albums", "l1"],
+      ["playlists", "r1"],
+      ["account", "r2"],
+      ["audio-stop", "triangle"],
+    ]) {
+      assert.equal(
+        details.find((node) => node.props.name === name).props.shortcutKeyGuide,
+        shortcut,
+      );
+    }
     assert.ok(
       details.some(
         (node) =>

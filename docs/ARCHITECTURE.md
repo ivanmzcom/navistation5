@@ -9,7 +9,7 @@ the executor vtable and credential scope afterward.
 
 The bootstrap forwards the original executor call and schedules Hermes v89 code
 on the normal JS thread. The build checks its exception barrier and layout
-fingerprints. UI bytecode is limited to 163840 bytes. Published native storage
+fingerprints. UI bytecode is limited to 180224 bytes. Published native storage
 stays mapped until ShellUI exits.
 
 An audio-enabled start configures HTTP audio through ShellUI's
@@ -38,7 +38,7 @@ rows rather than the scroll container. L1 and R1 switch collection tabs.
 
 `ui/i18n.mjs` selects translations from the cached native
 `StringResource.defaultLocale`. Regional locales share their language;
-unsupported languages use Spanish. This read does not change console settings.
+unsupported languages use English. This read does not change console settings.
 
 ## Playback
 

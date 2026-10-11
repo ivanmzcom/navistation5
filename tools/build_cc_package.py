@@ -824,8 +824,8 @@ try { Object.defineProperty(globalThis, '__navidromeLocalMusicControl', {value: 
     hbc(hbc_data)
     stub = sections(out / "cc-bootstrap-stub.elf")
     code = stub[".text"]["data"]
-    # Ten bytecode pages plus the two bootstrap pages fit the bounded tracer.
-    if len(hbc_data) > 10 * 16384:
+    # Eleven bytecode pages plus the two bootstrap pages fit the bounded tracer.
+    if len(hbc_data) > 11 * 16384:
         raise ValueError(
             "UI bytecode exceeds the installer's initialized mapping capacity"
         )

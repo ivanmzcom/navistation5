@@ -1,4 +1,4 @@
-// Display strings only. Regional locales share a language; unsupported locales use Spanish.
+// Display strings only. Regional locales share a language; unsupported locales use English.
 const keys = [
   "untitled",
   "reconnect",
@@ -52,7 +52,7 @@ const messages = {
     "Deteniendo…",
     "Cargando…",
     "Tu música",
-    "Seguir",
+    "Reanudar",
     "Pausar",
     "Parar",
     "canción",
@@ -260,13 +260,13 @@ export function resolveLanguage(locale) {
     typeof locale === "string"
       ? locale.trim().toLowerCase().split(/[-_]/)[0]
       : "";
-  return SUPPORTED_LANGUAGES.includes(language) ? language : "es";
+  return SUPPORTED_LANGUAGES.includes(language) ? language : "en";
 }
 export function createTranslator(locale) {
   const values = messages[resolveLanguage(locale)];
   const dictionary = {};
   keys.forEach((key, index) => {
-    dictionary[key] = values[index] || messages.es[index];
+    dictionary[key] = values[index] || messages.en[index];
   });
   return (key) => dictionary[key] || key;
 }

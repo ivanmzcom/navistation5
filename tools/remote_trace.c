@@ -1,5 +1,5 @@
 /* SPDX-License-Identifier: GPL-3.0-or-later */
-#define ND_MAX_TRACE_CALLS 56U
+#define ND_MAX_TRACE_CALLS 64U
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Wunused-function"
 #include "remote_trace_core.inc"
