@@ -37,6 +37,13 @@ whole collection. Navidrome supplies the song, artist and album names.
 Captured directly from a PS5 running firmware 13.20, with the Music card open
 over Home.
 
+## Download
+
+Download `navistation5.elf` from [Releases](https://github.com/ivanmzcom/navistation5/releases).
+The release build uses `http://navidrome.local:4533` as an editable default;
+enter your server URL and credentials in the Music card. See [Load](#load).
+Only firmware 13.20 is supported.
+
 ## Build
 
 Requires Node.js 20+, Python 3, Make,
